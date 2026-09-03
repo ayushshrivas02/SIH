@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Database, FileText, Trash2, RefreshCw, Cpu, UploadCloud } from 'lucide-react';
+import { Database, FileText, Trash2, RefreshCw, Cpu, UploadCloud, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useKnowledgeBaseStore } from '@/lib/store/appStore';
 
 type Document = {
   id: string;
@@ -20,12 +21,66 @@ type Document = {
   };
 };
 
+type RagSource = {
+  chunkId: string;
+  documentName: string;
+  pageNumber: number;
+  section: string;
+  content: string;
+  score: number;
+};
+
+type RagResult = { answer: string; sources: RagSource[]; grounded: boolean };
+
+const demoQuestions = [
+  'What should be checked during a routine pump inspection?',
+  'What PPE is required during maintenance?',
+  'What can cause high cooling-system temperature?',
+  'How often should routine pump inspection be performed?',
+];
+
 export default function KnowledgeBasePage() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  
+  const { ragQuery, ragResult, selectedDatabase, setRagQuery, setRagResult, setSelectedDatabase } = useKnowledgeBaseStore();
+  const [ragLoading, setRagLoading] = useState(false);
+  const [databases, setDatabases] = useState<any[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  const fetchDatabases = async () => {
+    try {
+      const res = await fetch('/api/data-sources');
+      if (res.ok) {
+        const data = await res.json();
+        setDatabases(data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleDeleteDatabase = async () => {
+    if (selectedDatabase === 'local') return;
+    if (!confirm('Are you sure you want to delete this database?')) return;
+    
+    try {
+      const res = await fetch(`/api/data-sources/${selectedDatabase}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        toast({ title: 'Database Deleted', description: 'The database has been removed.' });
+        setSelectedDatabase('local');
+        fetchDatabases();
+      } else {
+        toast({ title: 'Error', description: 'Failed to delete database.', variant: 'destructive' });
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: 'Network error.', variant: 'destructive' });
+    }
+  };
 
   const fetchDocuments = async () => {
     try {
@@ -43,6 +98,7 @@ export default function KnowledgeBasePage() {
 
   useEffect(() => {
     fetchDocuments();
+    fetchDatabases();
     // Poll every 3 seconds if any document is processing
     const interval = setInterval(() => {
       setDocuments((prevDocs) => {
@@ -125,6 +181,26 @@ export default function KnowledgeBasePage() {
         description: error.message,
         variant: 'destructive',
       });
+    }
+  };
+
+  const runRagTest = async (query = ragQuery) => {
+    setRagQuery(query);
+    setRagLoading(true);
+    setRagResult(null);
+    try {
+      const response = await fetch('/api/rag/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, databaseId: selectedDatabase }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Local RAG query failed.');
+      setRagResult(data);
+    } catch (error: any) {
+      toast({ title: 'RAG Test Failed', description: error.message, variant: 'destructive' });
+    } finally {
+      setRagLoading(false);
     }
   };
 
@@ -235,6 +311,79 @@ export default function KnowledgeBasePage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card className="bg-zinc-900 border-zinc-800">
+        <CardHeader>
+          <CardTitle>RAG & External Data Test</CardTitle>
+          <CardDescription>Select a target database to query. Queries are processed entirely on-premise.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <div className="flex flex-col space-y-2 mb-4">
+            <label className="text-sm font-medium text-zinc-300">Target Database</label>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <select
+                value={selectedDatabase}
+                onChange={(e) => setSelectedDatabase(e.target.value)}
+                className="h-10 w-full md:w-1/2 rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-100"
+              >
+                <option value="local">Local Document Index (Vector RAG)</option>
+                {databases.map((db) => (
+                  <option key={db.id} value={db.id}>
+                    {db.name} ({db.type})
+                  </option>
+                ))}
+              </select>
+              {selectedDatabase !== 'local' && (
+                <Button 
+                  variant="destructive" 
+                  onClick={handleDeleteDatabase}
+                  className="h-10"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" /> Delete Database
+                </Button>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              value={ragQuery}
+              onChange={(event) => setRagQuery(event.target.value)}
+              onKeyDown={(event) => event.key === 'Enter' && runRagTest()}
+              className="flex h-10 w-full rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-100"
+              aria-label="RAG test query"
+            />
+            <Button onClick={() => runRagTest()} disabled={ragLoading}>
+              {ragLoading ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
+              {ragLoading ? 'Searching locally...' : 'Run RAG Test'}
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {demoQuestions.map((question) => (
+              <Button key={question} variant="outline" size="sm" className="h-auto whitespace-normal text-left bg-transparent border-zinc-700" onClick={() => runRagTest(question)} disabled={ragLoading}>
+                {question}
+              </Button>
+            ))}
+          </div>
+          {ragResult && <div className="grid lg:grid-cols-2 gap-4">
+            <div className="rounded-lg border border-zinc-800 p-4 space-y-3">
+              <h3 className="font-semibold">Retrieved Sources</h3>
+              {ragResult.sources.length === 0 ? <p className="text-sm text-zinc-400">No relevant source was retrieved; no answer was generated from documents.</p> : ragResult.sources.map((source) => (
+                <div key={source.chunkId} className="border-l-2 border-blue-500 pl-3 text-sm">
+                  <p className="font-medium">{source.documentName}</p>
+                  <p className="text-zinc-400">Page {source.pageNumber} · {source.section}</p>
+                  <p className="text-green-400">Similarity/Relevance: {(source.score * 100).toFixed(1)}%</p>
+                  <p className="mt-1 text-zinc-300">{source.content}</p>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-lg border border-zinc-800 p-4">
+              <h3 className="font-semibold mb-3">Final Answer</h3>
+              <p className="whitespace-pre-wrap text-sm leading-6 text-zinc-200">{ragResult.answer}</p>
+            </div>
+          </div>}
+        </CardContent>
+      </Card>
     </div>
   );
 }

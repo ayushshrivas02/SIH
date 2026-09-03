@@ -1,16 +1,25 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
 import { auth } from '@/lib/auth';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { requireRole } from '@/lib/rbac';
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export const GET = requireRole('USER', async (
+  req: NextRequest,
+  { params }: { params: { id: string } },
+  session: any
+) => {
   try {
-    const session = await auth();
-    if (!session) return new NextResponse('Unauthorized', { status: 401 });
+
+    const role = session.user.role?.toUpperCase();
+    const userId = session.user.id;
+    const where = (role === 'ADMIN' || role === 'MANAGER') 
+      ? { id: params.id } 
+      : { id: params.id, userId };
 
     const doc = await prisma.document.findUnique({
-      where: { id: params.id },
+      where,
     });
 
     if (!doc) {
@@ -38,15 +47,23 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     console.error('Document fetch error:', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
-}
+});
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export const DELETE = requireRole('MANAGER', async (
+  req: NextRequest, 
+  { params }: { params: { id: string } },
+  session: any
+) => {
   try {
-    const session = await auth();
-    if (!session) return new NextResponse('Unauthorized', { status: 401 });
+
+    const role = session.user.role?.toUpperCase();
+    const userId = session.user.id;
+    const where = (role === 'ADMIN' || role === 'MANAGER') 
+      ? { id: params.id } 
+      : { id: params.id, userId };
 
     const doc = await prisma.document.findUnique({
-      where: { id: params.id },
+      where,
     });
 
     if (!doc) {
@@ -71,4 +88,4 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     console.error('Document delete error:', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
-}
+});

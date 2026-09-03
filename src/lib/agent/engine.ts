@@ -37,6 +37,25 @@ export class AgentEngine {
       // Automatically select provider based on classification
       const taskCategory = plan.taskClassification || 'AGENT';
       const ai = await AIProviderManager.getProviderForTask(taskCategory as any);
+      
+      let targetModel = undefined;
+      if (ai.getModels) {
+        const availableModels = await ai.getModels();
+        const modelNames = availableModels.map(m => m.name);
+        if (modelNames.length === 0) {
+          if (ai.id === 'ollama') throw new Error('No models are installed in Ollama.');
+        } else {
+          targetModel = modelNames[0];
+        }
+      }
+      if (targetModel && 'setModel' in ai) {
+         (ai as any).setModel?.(targetModel);
+      }
+      const health = await ai.healthCheck();
+      if (health.status !== 'CONNECTED') {
+        throw new Error(`AI Provider (${ai.name}) is unavailable: ${health.error || 'Unknown error'}`);
+      }
+
       const finalModel = (ai as any).model || 'unknown';
 
       let stepIndex = 0;
@@ -52,36 +71,25 @@ export class AgentEngine {
 
         const currentStep = plan.steps[stepIndex];
         
-        // High-impact actions require approval
-        const highImpactTools = ['WriteFile', 'GenerateDocument'];
-        if (highImpactTools.includes(currentStep.requiredTool || '') && task.status !== 'APPROVED_FOR_IMPACT') {
-          await prisma.task.update({ where: { id: taskId }, data: { status: 'WAITING_APPROVAL' } });
-          await prisma.taskStep.create({
-            data: { taskId, action: `Approval required for ${currentStep.requiredTool}`, status: 'PENDING', result: `Waiting for user approval to execute ${currentStep.requiredTool}.` }
-          });
-          return; // Pause execution
-        }
-        
-        // If approved, reset status to IN_PROGRESS so we don't ask again immediately
-        if (task.status === 'APPROVED_FOR_IMPACT') {
-          await prisma.task.update({ where: { id: taskId }, data: { status: 'IN_PROGRESS' } });
-        }
+
 
         const dbStep = await prisma.taskStep.create({
           data: { taskId, action: `Executing: ${currentStep.goal}`, status: 'PENDING' }
         });
 
         // Agent selects parameters based on context
+        const availableToolsStr = JSON.stringify(AgentTools.getAvailableTools(), null, 2);
         const systemPrompt = `You are an autonomous agent executing a workflow.
 Current Goal: ${currentStep.goal}
 Suggested Tool: ${currentStep.requiredTool || 'None'}
-Available Tools: Calculate, ReadFile, WriteFile, ExecuteCode, GenerateDocument, VisionAnalysis, OCR, PDFReader, CSVAnalysis, RAGSearch, None
+Available Tools Definitions:
+${availableToolsStr}
 
 Context History:
 ${context}
 
-You must execute this step. If a tool is required, provide the parameters. You MUST choose a tool from the Available Tools list. If the Suggested Tool is invalid or failed previously, pick the closest matching Available Tool or use ExecuteCode.
-Respond ONLY with a valid JSON object:
+You must execute this step. If a tool is required, provide the parameters exactly as described in the tool definition. You MUST choose a tool from the Available Tools list. If the Suggested Tool is invalid or failed previously, pick the closest matching Available Tool or use ExecuteCode.
+Respond ONLY with a valid JSON object matching this schema:
 {
   "tool": "ToolName",
   "parameters": { "param1": "value" },
@@ -90,15 +98,12 @@ Respond ONLY with a valid JSON object:
 
         try {
           const start = Date.now();
-          const response = await ai.chat([
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: 'What parameters should we use for the required tool?' }
-          ]);
-          
           let decision;
           try {
-             const cleaned = response.replace(/```json/g, '').replace(/```/g, '').trim();
-             decision = JSON.parse(cleaned);
+            decision = await ai.generateStructuredOutput({
+              schema: {},
+              prompt: systemPrompt + '\nWhat parameters should we use for the required tool?\n'
+            });
           } catch(e) {
              decision = { tool: currentStep.requiredTool, parameters: currentStep.inputArguments || {}, reasoning: 'Fallback due to parse error' };
           }

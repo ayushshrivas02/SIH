@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { requireRole } from '@/lib/rbac';
 
-export async function GET() {
+export const GET = requireRole('ADMIN', async () => {
   try {
     const logs = await prisma.auditLog.findMany({
       orderBy: { createdAt: 'desc' },
@@ -12,4 +13,4 @@ export async function GET() {
     console.error('Error fetching audit logs:', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
-}
+});

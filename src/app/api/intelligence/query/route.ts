@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
 import { AIProviderManager } from '@/lib/ai/manager';
+import { requireRole } from '@/lib/rbac';
 
-export async function POST(req: Request) {
+export const POST = requireRole('USER', async (req: NextRequest) => {
   try {
     const { documentId, query, type } = await req.json();
 
@@ -28,6 +29,29 @@ export async function POST(req: Request) {
     // Call LLM
     const ai = await AIProviderManager.getProviderForTask(type === 'image' ? 'VISION' : 'CHAT');
     
+    let targetModel = undefined;
+    if (ai.getModels) {
+      const availableModels = await ai.getModels();
+      const modelNames = availableModels.map(m => m.name);
+      if (modelNames.length === 0) {
+        if (ai.id === 'ollama') {
+          return NextResponse.json({ error: 'No models are installed in Ollama.' }, { status: 400 });
+        }
+      } else {
+        targetModel = modelNames[0];
+      }
+    }
+    
+    if (targetModel && 'setModel' in ai) {
+       (ai as any).setModel?.(targetModel);
+       if (type === 'image') (ai as any).setVisionModel?.(targetModel);
+    }
+    
+    const health = await ai.healthCheck();
+    if (health.status !== 'CONNECTED') {
+      return NextResponse.json({ error: `AI Provider (${ai.name}) is unavailable: ${health.error || 'Unknown error'}` }, { status: 503 });
+    }
+
     const systemPrompt = `You are a Document Intelligence Agent. You are tasked with answering the user's query based strictly on the provided document context.
 
 Document Name: ${doc.filename}
@@ -59,4 +83,4 @@ If the answer is not in the context, say "I cannot find the answer in the docume
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return NextResponse.json({ error: (error as any).message || 'Failed to process intelligence query' }, { status: 500 });
   }
-}
+});

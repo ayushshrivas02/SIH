@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { AIProviderManager } from '@/lib/ai/manager';
 import { prisma } from '@/lib/db';
+import { requireRole } from '@/lib/rbac';
 
-export async function POST(req: Request) {
+export const POST = requireRole('USER', async (req: NextRequest) => {
   try {
     const { imageBase64, prompt, model } = await req.json();
 
@@ -13,16 +14,24 @@ export async function POST(req: Request) {
     const provider = await AIProviderManager.getProviderForTask('VISION');
     
     let targetModel = model;
-    if (!targetModel) {
-      const setting = await prisma.systemSetting.findUnique({ where: { key: 'default_vision_model' } });
-      if (setting && setting.value) targetModel = setting.value;
+    if (provider.getModels) {
+      const availableModels = await provider.getModels();
+      const modelNames = availableModels.map(m => m.name);
+      if (modelNames.length === 0) {
+        if (provider.id === 'ollama') {
+          return NextResponse.json({ error: 'No models are installed in Ollama. Please download a model first.' }, { status: 400 });
+        }
+      } else {
+        if (targetModel && !modelNames.includes(targetModel)) {
+          console.warn(`Requested vision model ${targetModel} not found. Falling back to ${modelNames[0]}`);
+          targetModel = modelNames[0];
+        } else if (!targetModel) {
+          targetModel = modelNames[0];
+        }
+      }
     }
 
     if (targetModel && 'setModel' in provider) {
-      // For Ollama we can use setModel for vision as well, or we may need a setVisionModel. 
-      // Assuming setModel overrides the primary model used for requests.
-      // Wait, in OllamaProvider vision uses `this.visionModel`. Let's add setVisionModel if needed, or assume setModel is enough.
-      // Actually we will just add setVisionModel to OllamaProvider shortly.
       (provider as any).setVisionModel?.(targetModel);
     }
     
@@ -57,4 +66,4 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ error: error.message || 'Failed to analyze image' }, { status: 503 });
   }
-}
+});

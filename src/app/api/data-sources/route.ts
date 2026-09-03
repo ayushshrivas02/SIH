@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
+import { requireRole } from '@/lib/rbac';
 
-export async function GET() {
+export const GET = requireRole('MANAGER', async (req: NextRequest) => {
   try {
     const connections = await prisma.databaseConnection.findMany({
       orderBy: { createdAt: 'desc' },
@@ -18,9 +19,9 @@ export async function GET() {
     console.error('Failed to fetch database connections:', error);
     return NextResponse.json({ error: 'Failed to fetch database connections' }, { status: 500 });
   }
-}
+});
 
-export async function POST(req: Request) {
+export const POST = requireRole('MANAGER', async (req: NextRequest) => {
   try {
     const { name, type, uri } = await req.json();
     
@@ -42,4 +43,4 @@ export async function POST(req: Request) {
     console.error('Failed to create database connection:', error);
     return NextResponse.json({ error: 'Failed to create database connection' }, { status: 500 });
   }
-}
+});

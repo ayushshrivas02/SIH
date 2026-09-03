@@ -21,9 +21,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!user || !user.password) return null
 
         const isValid = await bcrypt.compare(credentials.password as string, user.password)
-        if (!isValid) return null
+        if (!isValid) {
+          await prisma.auditLog.create({
+            data: {
+              action: "LOGIN_FAILED",
+              userId: user.id,
+              details: "Invalid password attempt",
+            }
+          });
+          return null;
+        }
 
-        return { id: user.id, email: user.email, name: user.name, role: user.role }
+        await prisma.auditLog.create({
+          data: {
+            action: "LOGIN_SUCCESS",
+            userId: user.id,
+            details: "User logged in successfully",
+          }
+        });
+
+        return { id: user.id, email: user.email, name: user.name, role: user.role?.toUpperCase() || 'USER' }
       }
     })
   ],

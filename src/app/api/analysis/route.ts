@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { AIProviderManager } from '@/lib/ai/manager';
 import { prisma } from '@/lib/db';
+import { requireRole } from '@/lib/rbac';
 
-export async function POST(req: Request) {
+export const POST = requireRole('USER', async (req: NextRequest) => {
   try {
     const { datasetSummary, prompt } = await req.json();
     if (!datasetSummary || !prompt) {
@@ -49,4 +50,4 @@ ${datasetSummary}`;
     });
     return NextResponse.json({ error: error.message || 'Failed to analyze data.' }, { status: 503 });
   }
-}
+});

@@ -10,8 +10,10 @@ export type Message = {
 };
 
 interface AssistantState {
+  conversationId: string | null;
   messages: Message[];
   isLoading: boolean;
+  setConversationId: (id: string | null) => void;
   addMessage: (msg: Message) => void;
   updateMessage: (id: string, content: string) => void;
   setMessages: (messages: Message[]) => void;
@@ -20,29 +22,20 @@ interface AssistantState {
 }
 
 export const useAssistantStore = create<AssistantState>((set) => ({
+  conversationId: null,
   messages: [],
   isLoading: false,
+  setConversationId: (id) => set({ conversationId: id }),
   addMessage: (msg) => set((state) => {
-    const newMessages = [...state.messages, msg];
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('assistant_chat_messages', JSON.stringify(newMessages));
-    }
-    return { messages: newMessages };
+    return { messages: [...state.messages, msg] };
   }),
   updateMessage: (id, content) => set((state) => {
-    const newMessages = state.messages.map((m) => (m.id === id ? { ...m, content } : m));
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('assistant_chat_messages', JSON.stringify(newMessages));
-    }
-    return { messages: newMessages };
+    return { messages: state.messages.map((m) => (m.id === id ? { ...m, content } : m)) };
   }),
   setMessages: (messages) => set({ messages }),
   setIsLoading: (isLoading) => set({ isLoading }),
   clearMessages: () => set(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('assistant_chat_messages');
-    }
-    return { messages: [] };
+    return { messages: [], conversationId: null };
   }),
 }));
 
@@ -100,4 +93,34 @@ export const useVisionStore = create<VisionState>((set) => ({
     analyzing: false,
     editing: false
   })
+}));
+
+// Knowledge Base Store
+type RagSource = {
+  chunkId: string;
+  documentName: string;
+  pageNumber: number;
+  section: string;
+  content: string;
+  score: number;
+};
+
+type RagResult = { answer: string; sources: RagSource[]; grounded: boolean };
+
+interface KnowledgeBaseState {
+  ragQuery: string;
+  ragResult: RagResult | null;
+  selectedDatabase: string;
+  setRagQuery: (val: string) => void;
+  setRagResult: (val: RagResult | null) => void;
+  setSelectedDatabase: (val: string) => void;
+}
+
+export const useKnowledgeBaseStore = create<KnowledgeBaseState>((set) => ({
+  ragQuery: 'What should be checked during a routine pump inspection?',
+  ragResult: null,
+  selectedDatabase: 'local',
+  setRagQuery: (val) => set({ ragQuery: val }),
+  setRagResult: (val) => set({ ragResult: val }),
+  setSelectedDatabase: (val) => set({ selectedDatabase: val }),
 }));

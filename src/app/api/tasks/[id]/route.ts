@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
 import { AgentEngine } from '@/lib/agent/engine';
+import { requireRole } from '@/lib/rbac';
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export const GET = requireRole('USER', async (req: NextRequest, { params }: { params: { id: string } }) => {
   try {
     const task = await prisma.task.findUnique({
       where: { id: params.id },
@@ -23,9 +24,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     console.error('Fetch task error:', error);
     return NextResponse.json({ error: error.message || 'Internal error' }, { status: 500 });
   }
-}
+});
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export const PATCH = requireRole('MANAGER', async (req: NextRequest, { params }: { params: { id: string } }) => {
   try {
     const { status } = await req.json();
     
@@ -53,5 +54,4 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     console.error('Update task error:', error);
     return NextResponse.json({ error: error.message || 'Internal error' }, { status: 500 });
   }
-}
-
+});

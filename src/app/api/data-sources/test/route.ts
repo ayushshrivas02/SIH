@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
+import { requireRole } from '@/lib/rbac';
 
-export async function POST(req: Request) {
+export const POST = requireRole('MANAGER', async (req: NextRequest) => {
   try {
     const { type, uri } = await req.json();
     
@@ -40,4 +41,4 @@ export async function POST(req: Request) {
     console.error('Failed to test database connection:', error);
     return NextResponse.json({ error: 'Connection failed' }, { status: 500 });
   }
-}
+});

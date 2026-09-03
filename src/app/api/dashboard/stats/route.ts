@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
+import { requireRole } from '@/lib/rbac';
 
-export async function GET() {
+export const GET = requireRole('VIEWER', async (req: NextRequest) => {
   try {
     const documentCount = await prisma.document.count();
     
@@ -38,4 +39,4 @@ export async function GET() {
     console.error('Dashboard stats error:', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
-}
+});

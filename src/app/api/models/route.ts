@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { AIProviderManager } from '@/lib/ai/manager';
+import { requireRole } from '@/lib/rbac';
 
-export async function GET() {
+export const GET = requireRole('USER', async (req: NextRequest) => {
   try {
     const provider = await AIProviderManager.getProviderForTask('CHAT');
     const models = await provider.getModels();
@@ -11,4 +12,4 @@ export async function GET() {
     console.error('Failed to fetch models:', error);
     return NextResponse.json({ models: [] });
   }
-}
+});

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Database, Plus, Trash2, CheckCircle2, AlertCircle, RefreshCw, Network, Server, HardDrive } from 'lucide-react';
+import { Database, Plus, Trash2, CheckCircle2, AlertCircle, RefreshCw, Network, Server, HardDrive, UploadCloud } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -33,6 +33,11 @@ export default function DataSourcesPage() {
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<{success?: boolean; error?: string} | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  
+  // Upload database state
+  const [uploadName, setUploadName] = useState('');
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   
   const { toast } = useToast();
 
@@ -117,6 +122,40 @@ export default function DataSourcesPage() {
     }
   };
 
+  const handleUploadDatabase = async () => {
+    if (!uploadFile) {
+      toast({ title: 'Missing fields', description: 'Please select a file to upload.', variant: 'destructive' });
+      return;
+    }
+    
+    setIsUploading(true);
+    const formData = new FormData();
+    const finalName = uploadName.trim() || uploadFile.name.replace(/\.[^/.]+$/, ""); // Use file name if empty
+    formData.append('name', finalName);
+    formData.append('file', uploadFile);
+
+    try {
+      const res = await fetch('/api/data-sources/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (res.ok) {
+        toast({ title: 'Uploaded Successfully', description: 'Database has been uploaded and connected.' });
+        setUploadName('');
+        setUploadFile(null);
+        fetchConnections();
+      } else {
+        const data = await res.json();
+        toast({ title: 'Upload Error', description: data.error || 'Failed to upload', variant: 'destructive' });
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: 'Network error during upload', variant: 'destructive' });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -135,7 +174,10 @@ export default function DataSourcesPage() {
             <Network className="mr-2 h-4 w-4" /> Active Connections
           </TabsTrigger>
           <TabsTrigger value="add" className="data-[state=active]:bg-zinc-800">
-            <Plus className="mr-2 h-4 w-4" /> Add New Source
+            <Plus className="mr-2 h-4 w-4" /> Add Remote URI
+          </TabsTrigger>
+          <TabsTrigger value="upload" className="data-[state=active]:bg-zinc-800">
+            <UploadCloud className="mr-2 h-4 w-4" /> Upload Local DB
           </TabsTrigger>
         </TabsList>
         
@@ -273,7 +315,7 @@ export default function DataSourcesPage() {
                 </CardHeader>
                 <CardContent>
                   {testResult === null && !isTesting && (
-                    <div className="text-zinc-500 text-sm">Fill in the connection details and click "Test Connection" to verify connectivity.</div>
+                    <div className="text-zinc-500 text-sm">Fill in the connection details and click &quot;Test Connection&quot; to verify connectivity.</div>
                   )}
                   {isTesting && (
                     <div className="flex items-center text-blue-400 space-x-2">
@@ -317,6 +359,47 @@ export default function DataSourcesPage() {
               </Card>
             </div>
           </div>
+        </TabsContent>
+        
+        <TabsContent value="upload" className="mt-6">
+          <Card className="bg-zinc-900 border-zinc-800 max-w-2xl">
+            <CardHeader>
+              <CardTitle>Upload SQLite Database</CardTitle>
+              <CardDescription>Upload a local .sqlite or .db file to be queried dynamically by the RAG Agent.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="uploadName" className="text-zinc-300">Connection Name</Label>
+                <Input 
+                  id="uploadName" 
+                  placeholder="e.g., Local Inventory DB" 
+                  value={uploadName}
+                  onChange={(e) => setUploadName(e.target.value)}
+                  className="bg-zinc-950 border-zinc-700 text-zinc-100" 
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="dbFile" className="text-zinc-300">Select Database File (.sqlite, .db)</Label>
+                <Input 
+                  id="dbFile" 
+                  type="file"
+                  accept=".sqlite,.db"
+                  onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                  className="bg-zinc-950 border-zinc-700 text-zinc-100 file:text-zinc-300 file:bg-zinc-800 file:border-0 file:mr-4 file:px-4 file:py-1 file:rounded-md cursor-pointer" 
+                />
+              </div>
+            </CardContent>
+            <CardFooter className="flex gap-4 border-t border-zinc-800 pt-6">
+              <Button 
+                onClick={handleUploadDatabase}
+                disabled={isUploading || !uploadFile}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                {isUploading ? 'Uploading...' : 'Upload Database'}
+              </Button>
+            </CardFooter>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

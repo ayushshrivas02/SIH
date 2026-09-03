@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { requireRole } from '@/lib/rbac';
 
-export async function GET() {
+export const GET = requireRole('MANAGER', async (req: NextRequest) => {
   try {
     const reports = await prisma.report.findMany({
       orderBy: { createdAt: 'desc' },
@@ -14,4 +15,4 @@ export async function GET() {
     console.error('Error fetching reports:', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
-}
+});

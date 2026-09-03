@@ -15,9 +15,13 @@ model User {
   image         String?
   role          String    @default("ENGINEER")
   password      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt
   sessions      Session[]
   accounts      Account[]
   tasks         Task[]
+  documents     Document[]
+  conversations Conversation[]
 }
 
 
@@ -55,6 +59,8 @@ model Document {
   size      Int
   status    String   @default("UPLOADED") // UPLOADED, EXTRACTING, INDEXING, READY, ERROR
   content   String?
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   chunks    DocumentChunk[]
@@ -72,6 +78,8 @@ model DocumentChunk {
 model Conversation {
   id        String   @id @default(cuid())
   title     String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   messages  Message[]

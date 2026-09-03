@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { AIProviderManager } from '@/lib/ai/manager';
+import { requireRole } from '@/lib/rbac';
 
-export async function GET() {
+export const GET = requireRole('ADMIN', async (req: NextRequest) => {
   try {
     const textProvider = await AIProviderManager.getProviderForTask('CHAT');
     const visionProvider = await AIProviderManager.getProviderForTask('VISION');
@@ -58,4 +59,4 @@ export async function GET() {
     console.error('Health check error:', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
-}
+});

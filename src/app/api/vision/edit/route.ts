@@ -1,11 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { AIProviderManager } from '@/lib/ai/manager';
 import { Storage } from '@/lib/storage';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import crypto from 'crypto';
+import { requireRole } from '@/lib/rbac';
 
-export async function POST(req: Request) {
+export const POST = requireRole('USER', async (req: NextRequest) => {
   try {
     const session = await auth();
     const userId = session?.user?.id || 'anonymous'; // Fallback if auth is not strictly required in some configs
@@ -49,4 +50,4 @@ export async function POST(req: Request) {
     console.error('Vision edit error:', error);
     return NextResponse.json({ error: error.message || 'Internal Error' }, { status: 500 });
   }
-}
+});

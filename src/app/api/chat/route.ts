@@ -1,10 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { AIProviderManager } from '@/lib/ai/manager';
 import { prisma } from '@/lib/db';
 import { Orchestrator } from '@/lib/ai/orchestrator';
-import { LocalVectorStore } from '@/lib/ai/vector-store';
+import { searchDemoRag } from '@/lib/ai/demo-rag';
+import { requireRole } from '@/lib/rbac';
 
-export async function POST(req: Request) {
+export const POST = requireRole('USER', async (req: NextRequest) => {
   try {
     const { messages, model } = await req.json();
     if (!Array.isArray(messages) || messages.length === 0) {
@@ -49,13 +50,22 @@ export async function POST(req: Request) {
       autoRouted = true;
     }
 
-    if (!targetModel) {
-      // Find the appropriate default model setting key based on the task intent
-      const settingKey = orchestratorIntent === 'VISION' ? 'default_vision_model' : 
-                         orchestratorIntent === 'EMBEDDING' ? 'default_embedding_model' :
-                         'default_chat_model';
-                         
-      targetModel = await getValidModel(settingKey, provider);
+    // Validate the target model (whether from client or DB) against actual installed models
+    if (provider.getModels) {
+      const availableModels = await provider.getModels();
+      const modelNames = availableModels.map(m => m.name);
+      if (modelNames.length === 0) {
+        if (provider.id === 'ollama') {
+          return NextResponse.json({ error: 'No models are installed in Ollama. Please download a model first.' }, { status: 400 });
+        }
+      } else {
+        if (targetModel && !modelNames.includes(targetModel)) {
+          console.warn(`Requested model ${targetModel} not found. Falling back to ${modelNames[0]}`);
+          targetModel = modelNames[0];
+        } else if (!targetModel) {
+          targetModel = modelNames[0];
+        }
+      }
     }
 
     if (targetModel && 'setModel' in provider) {
@@ -64,9 +74,6 @@ export async function POST(req: Request) {
       if (orchestratorIntent === 'VISION' && 'setVisionModel' in provider) {
         (provider as any).setVisionModel(targetModel);
       }
-    } else if (!targetModel && provider.id === 'ollama') {
-      // If we couldn't find a target model and provider is Ollama, it means no models are installed
-      return NextResponse.json({ error: 'No models are installed in Ollama. Please download a model first.' }, { status: 400 });
     }
     
     // Attempt to read the correct model property based on intent
@@ -79,27 +86,28 @@ export async function POST(req: Request) {
 
     // --- RAG Processing ---
     let ragContext = '';
+    let ragSourcesHeader: string | undefined;
     if (orchestratorIntent === 'RAG') {
       try {
         const lastMessage = messages[messages.length - 1].content;
-        const embeddingProvider = await AIProviderManager.getProviderForTask('EMBEDDING');
-        
         // Fetch settings or use defaults
         const settingK = await getValidModel('rag_top_k', { getModels: () => [] });
         const settingThresh = await getValidModel('rag_threshold', { getModels: () => [] });
         
         const k = parseInt(settingK || '4');
-        const threshold = parseFloat(settingThresh || '0.7');
+        const threshold = parseFloat(settingThresh || '0.35');
 
-        const queryEmbedding = await embeddingProvider.generateEmbedding(lastMessage);
-        const results = await LocalVectorStore.similaritySearch(queryEmbedding, k, threshold);
+        // Phase 7 uses the local demo_rag.db as the source of truth. Its vector
+        // entries are keyed by knowledge_chunks.id and are searched in memory.
+        const results = await searchDemoRag(lastMessage, k, threshold);
 
         if (results.length > 0) {
-          ragContext = results.map(r => `--- Document: ${r.metadata.filename} (Page/Chunk: ${r.metadata.pageNumber}) ---\n${r.content}`).join('\n\n');
+          ragContext = results.map(r => `--- Document: ${r.documentName} (Page ${r.pageNumber}, Section: ${r.section}) ---\n${r.content}`).join('\n\n');
+          ragSourcesHeader = JSON.stringify(results.map((r) => ({ documentName: r.documentName, pageNumber: r.pageNumber, section: r.section, score: r.score })));
           
           const ragSystemPrompt = `You are a strict Retrieval-Augmented Generation assistant. 
 You must answer the user's question using ONLY the provided document context below. 
-You must cite the documents using [Document Name - Page X] format at the end of your sentences.
+You must cite the documents using [Document Name | Page X | Section] format at the end of your sentences.
 If the context does not contain sufficient information to answer the question, explicitly state: "The provided documents do not contain enough information to answer this question." DO NOT hallucinate or use outside knowledge.
 
 <CONTEXT>
@@ -155,7 +163,8 @@ ${ragContext}
         'Content-Type': 'text/plain; charset=utf-8',
         'Cache-Control': 'no-cache',
         'X-Provider': providerTag,
-        'X-Model': finalModel
+        'X-Model': finalModel,
+        ...(ragSourcesHeader ? { 'X-RAG-Sources': encodeURIComponent(ragSourcesHeader) } : {})
       }
     });
   } catch (error: unknown) {
@@ -171,4 +180,4 @@ ${ragContext}
 
     return NextResponse.json({ error: msg }, { status: 503 });
   }
-}
+});

@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
+import { requireRole } from '@/lib/rbac';
 
-export async function GET() {
+export const GET = requireRole('ADMIN', async (req: NextRequest) => {
   try {
     const settings = await prisma.systemSetting.findMany();
     const result: Record<string, string> = {};
@@ -13,9 +14,9 @@ export async function GET() {
     console.error('Failed to get settings:', error);
     return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 });
   }
-}
+});
 
-export async function POST(req: Request) {
+export const POST = requireRole('ADMIN', async (req: NextRequest) => {
   try {
     const { key, value } = await req.json();
     if (!key || value === undefined) {
@@ -33,4 +34,4 @@ export async function POST(req: Request) {
     console.error('Failed to save setting:', error);
     return NextResponse.json({ error: 'Failed to save setting' }, { status: 500 });
   }
-}
+});

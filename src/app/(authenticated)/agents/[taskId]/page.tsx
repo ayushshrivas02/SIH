@@ -14,6 +14,7 @@ export default function AgentWorkspacePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // eslint-disable-next-line prefer-const
     let interval: NodeJS.Timeout | undefined;
     
     const fetchTask = async () => {

@@ -44,7 +44,7 @@ export class OllamaProvider implements AIProvider {
       }
       return { status: 'UNAVAILABLE', error: res.statusText };
     } catch (e: any) {
-      return { status: 'UNAVAILABLE', error: e.message };
+      return { status: 'UNAVAILABLE', error: e.message || 'Connection refused or server offline' };
     }
   }
 
@@ -57,20 +57,26 @@ export class OllamaProvider implements AIProvider {
         id: m.name,
         name: m.name
       }));
-    } catch (e) {
-      console.error('Ollama getModels error:', e);
+    } catch (e: any) {
+      console.error('Ollama getModels error:', e.message);
       return [];
     }
   }
 
   async chat(messages: ChatMessage[]): Promise<string> {
-    const res = await fetch(`${this.baseUrl}/api/chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
+
+    try {
+      const res = await fetch(`${this.baseUrl}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
       body: JSON.stringify({
         model: this.model,
         messages: messages.map(m => ({ role: m.role, content: m.content })),
         stream: false,
+        keep_alive: '5m'
       }),
     });
 
@@ -78,18 +84,27 @@ export class OllamaProvider implements AIProvider {
       throw new Error(`Ollama chat error: ${res.statusText}`);
     }
 
-    const data = await res.json();
-    return data.message?.content || '';
+      const data = await res.json();
+      return data.message?.content || '';
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   async *streamChat(messages: ChatMessage[]): AsyncGenerator<string, void, unknown> {
-    const res = await fetch(`${this.baseUrl}/api/chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
+
+    try {
+      const res = await fetch(`${this.baseUrl}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
       body: JSON.stringify({
         model: this.model,
         messages: messages.map(m => ({ role: m.role, content: m.content })),
         stream: true,
+        keep_alive: '5m'
       }),
     });
 
@@ -122,6 +137,9 @@ export class OllamaProvider implements AIProvider {
         }
       }
     }
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   async generateStructuredOutput<T>(options: StructuredOutputOptions<T>): Promise<T> {
@@ -134,6 +152,7 @@ export class OllamaProvider implements AIProvider {
         prompt: options.prompt + '\nRespond ONLY in valid JSON format.',
         format: 'json',
         stream: false,
+        keep_alive: '5m'
       }),
     });
 
@@ -152,6 +171,7 @@ export class OllamaProvider implements AIProvider {
       body: JSON.stringify({
         model: this.embeddingModel,
         prompt: text,
+        keep_alive: '5m'
       }),
     });
 
@@ -175,6 +195,7 @@ export class OllamaProvider implements AIProvider {
         prompt: prompt,
         images: [base64Data],
         stream: false,
+        keep_alive: '5m'
       }),
     });
 

@@ -1,13 +1,19 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
 import fs from 'fs/promises';
 import path from 'path';
+import { requireRole } from '@/lib/rbac';
 
 const UPLOAD_DIR = process.env.UPLOAD_STORAGE || './uploads';
 
-export async function GET() {
+export const GET = requireRole('USER', async (req, context, session) => {
   try {
+    const role = (session.user as any).role?.toUpperCase();
+    const userId = (session.user as any).id;
+    const where = (role === 'ADMIN' || role === 'MANAGER') ? {} : { userId };
+
     const documents = await prisma.document.findMany({
+      where,
       orderBy: { createdAt: 'desc' },
       include: {
         _count: {
@@ -20,9 +26,9 @@ export async function GET() {
     console.error('Error fetching documents:', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
-}
+});
 
-export async function POST(req: Request) {
+export const POST = requireRole('MANAGER', async (req: NextRequest, context, session) => {
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
@@ -55,6 +61,7 @@ export async function POST(req: Request) {
         fileType: file.type || 'application/octet-stream',
         size: file.size,
         status: 'UPLOADED',
+        userId: (session.user as any).id,
       },
     });
 
@@ -70,4 +77,4 @@ export async function POST(req: Request) {
     console.error('Upload error:', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
-}
+});
