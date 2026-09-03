@@ -1,0 +1,59 @@
+
+> sovereign-ai-workbench@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+  ▲ Next.js 14.2.15
+  - Local:        http://localhost:3001
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1724ms
+ ○ Compiling /assistant ...
+ ✓ Compiled /assistant in 1728ms (1031 modules)
+ GET /assistant 200 in 1962ms
+ ✓ Compiled in 249ms (513 modules)
+ ✓ Compiled in 47ms (497 modules)
+ GET /assistant 200 in 71ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 559ms (668 modules)
+ ✓ Compiled (696 modules)
+ GET /favicon.ico 200 in 918ms
+ GET /api/auth/session 200 in 2123ms
+ GET /api/auth/session 200 in 857ms
+ GET /api/auth/session 200 in 12ms
+ GET /api/auth/session 200 in 18ms
+ GET /api/auth/session 200 in 22ms
+ GET /api/auth/session 200 in 23ms
+ ○ Compiling /documents ...
+ ✓ Compiled /documents in 931ms (1217 modules)
+ ✓ Compiled /api/documents in 143ms (712 modules)
+ GET /api/documents 200 in 197ms
+ GET /api/documents 200 in 14ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 731ms (716 modules)
+Chat error: [TypeError: fetch failed] {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:11434
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2017:16) {
+    errno: -4078,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 11434
+  }
+}
+ POST /api/chat 503 in 821ms
+ ○ Compiling /vision ...
+ ✓ Compiled /vision in 825ms (1238 modules)
+ ✓ Compiled /api/vision in 179ms (726 modules)
+Vision analysis error: [TypeError: fetch failed] {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:11434
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2017:16) {
+    errno: -4078,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 11434
+  }
+}
+ POST /api/vision 500 in 274ms
