@@ -59,3 +59,21 @@ export const POST = requireRole('USER', async (req: NextRequest, context, sessio
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 });
+
+export const DELETE = requireRole('USER', async (req: NextRequest, context, session) => {
+  try {
+    const userId = (session?.user as any)?.id;
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    await prisma.conversation.deleteMany({
+      where: { userId: userId }
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Failed to delete conversations:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+});

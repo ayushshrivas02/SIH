@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { UploadCloud, FileText, Trash2, RefreshCw, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useSession } from 'next-auth/react';
 
 type Document = {
   id: string;
@@ -24,6 +25,10 @@ export default function DocumentsPage() {
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  
+  const { data: session } = useSession();
+  const userRole = (session?.user as any)?.role?.toUpperCase() || 'VIEWER';
+  const canModify = userRole === 'ADMIN' || userRole === 'MANAGER';
 
   const [viewingDoc, setViewingDoc] = useState<Document & { content?: string } | null>(null);
 
@@ -125,19 +130,21 @@ export default function DocumentsPage() {
           <Button variant="outline" onClick={fetchDocuments} className="bg-transparent border-zinc-700 hover:bg-zinc-800">
             <RefreshCw className="mr-2 h-4 w-4" /> Refresh
           </Button>
-          <div className="relative">
-            <input
-              type="file"
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              onChange={handleFileUpload}
-              disabled={uploading}
-              accept=".pdf,.txt,.csv,.docx"
-            />
-            <Button className="bg-blue-600 hover:bg-blue-700 w-full" disabled={uploading}>
-              <UploadCloud className="mr-2 h-4 w-4" /> 
-              {uploading ? 'Uploading...' : 'Upload Document'}
-            </Button>
-          </div>
+          {canModify && (
+            <div className="relative">
+              <input
+                type="file"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                onChange={handleFileUpload}
+                disabled={uploading}
+                accept=".pdf,.txt,.csv,.docx"
+              />
+              <Button className="bg-blue-600 hover:bg-blue-700 w-full" disabled={uploading}>
+                <UploadCloud className="mr-2 h-4 w-4" /> 
+                {uploading ? 'Uploading...' : 'Upload Document'}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -194,9 +201,11 @@ export default function DocumentsPage() {
                       <Button variant="ghost" size="icon" onClick={() => handleView(doc.id)} className="text-zinc-400 hover:text-white hover:bg-zinc-700 mr-2">
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(doc.id)} className="text-red-400 hover:text-red-300 hover:bg-red-400/10">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {canModify && (
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(doc.id)} className="text-red-400 hover:text-red-300 hover:bg-red-400/10">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

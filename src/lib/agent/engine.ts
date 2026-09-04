@@ -4,7 +4,7 @@ import { AIProviderManager } from '@/lib/ai/manager';
 import { prisma } from '@/lib/db';
 
 export class AgentEngine {
-  static async runTask(taskId: string, input: string) {
+  static async runTask(taskId: string, input: string, forcedModel?: string) {
     try {
       let task = await prisma.task.findUnique({ where: { id: taskId }, include: { steps: true } });
       if (!task) throw new Error('Task not found');
@@ -38,14 +38,19 @@ export class AgentEngine {
       const taskCategory = plan.taskClassification || 'AGENT';
       const ai = await AIProviderManager.getProviderForTask(taskCategory as any);
       
-      let targetModel = undefined;
-      if (ai.getModels) {
+      let targetModel = forcedModel;
+      if (!targetModel && ai.getModels) {
         const availableModels = await ai.getModels();
         const modelNames = availableModels.map(m => m.name);
         if (modelNames.length === 0) {
           if (ai.id === 'ollama') throw new Error('No models are installed in Ollama.');
         } else {
-          targetModel = modelNames[0];
+          const configuredModel = (ai as any).model;
+          if (configuredModel && modelNames.includes(configuredModel)) {
+            targetModel = configuredModel;
+          } else {
+            targetModel = modelNames[0];
+          }
         }
       }
       if (targetModel && 'setModel' in ai) {
@@ -56,9 +61,17 @@ export class AgentEngine {
         throw new Error(`AI Provider (${ai.name}) is unavailable: ${health.error || 'Unknown error'}`);
       }
 
-      const finalModel = (ai as any).model || 'unknown';
+      const finalModel = targetModel || (ai as any).model || 'unknown';
 
       let stepIndex = 0;
+      
+      // Fast forward past already completed steps in the current plan
+      // We count how many 'Executing: ' steps were completed since the last plan generation
+      const lastPlanIndex = task.steps.map(s => s.action).lastIndexOf('Plan Generated');
+      const recentSteps = lastPlanIndex >= 0 ? task.steps.slice(lastPlanIndex) : task.steps;
+      const completedStepsCount = recentSteps.filter(s => s.action.startsWith('Executing: ') && s.status === 'COMPLETED').length;
+      stepIndex = completedStepsCount;
+
       let iterations = 0;
       const MAX_ITERATIONS = 10;
       let replanned = false;
@@ -127,6 +140,8 @@ Goal: ${currentStep.goal}
 Tool Output: ${toolResult.result}
 
 Analyze the output. Did it succeed in achieving the goal?
+IMPORTANT: If the tool output says it was "saved as a Task Report for approval", you MUST respond with "status": "CONTINUE" and success, because the human will approve it asynchronously. Do not RETRY.
+
 Respond ONLY with a valid JSON object:
 {
   "status": "CONTINUE" | "RETRY" | "REPLAN",
@@ -157,6 +172,15 @@ Respond ONLY with a valid JSON object:
           if (obsDecision.status === 'CONTINUE') {
             stepIndex++;
             stepRetryCount = 0;
+            
+            // If we generated a document, pause the engine to wait for human approval
+            if (decision.tool === 'GenerateDocument') {
+              await prisma.task.update({ where: { id: taskId }, data: { status: 'PENDING' } });
+              await prisma.taskStep.create({
+                 data: { taskId, action: 'Waiting for Human Approval', status: 'PENDING', result: 'Agent paused. Please approve the generated deliverable in the right panel.' }
+              });
+              return;
+            }
           } else if (obsDecision.status === 'RETRY') {
             stepRetryCount++;
             if (stepRetryCount > 2) {
@@ -210,11 +234,13 @@ Original Request: ${input}
 History:
 ${context}
 
+IMPORTANT: If the user requested data extraction, summarization, analysis, or specific values, your summary MUST contain the actual requested data, not just a statement that it was found. For example, do not say "The names were retrieved", but actually list the names!
+
 Did we succeed? Are all deliverables created? Are calculations correct?
 Provide a JSON response:
 {
   "verified": true/false,
-  "summary": "Final answer or reason for failure"
+  "summary": "The final result or answer directly addressing the user's prompt. Include all requested data."
 }`;
       
       const verifyResponse = await ai.chat([{ role: 'system', content: 'You are a strict verification module.' }, { role: 'user', content: verifyPrompt }]);

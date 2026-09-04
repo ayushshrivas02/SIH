@@ -5,7 +5,7 @@ import { requireRole } from '@/lib/rbac';
 
 export const POST = requireRole('USER', async (req: NextRequest, context, session) => {
   try {
-    const { agentId, input } = await req.json();
+    const { agentId, input, model } = await req.json();
     
     // 1. Authenticate user from session
     const userId = (session.user as any).id;
@@ -22,7 +22,7 @@ export const POST = requireRole('USER', async (req: NextRequest, context, sessio
 
     // 3. Trigger Agent Engine asynchronously (Fire and Forget)
     // This allows the route to return immediately so the UI can start polling
-    AgentEngine.runTask(task.id, input).catch(console.error);
+    AgentEngine.runTask(task.id, input, model).catch(console.error);
 
     // 4. Return Task ID
     return NextResponse.json({ success: true, taskId: task.id });

@@ -123,7 +123,13 @@ export class AgentTools {
 
   private static getSafePath(filename: string) {
     const safePath = path.normalize(filename).replace(/^(\.\.(\/|\\|$))+/, '');
-    const filePath = path.join(SANDBOX_DIR, safePath);
+    let filePath = path.join(SANDBOX_DIR, safePath);
+    if (!fs.existsSync(filePath)) {
+       const uploadPath = path.join(process.cwd(), 'uploads', safePath);
+       if (fs.existsSync(uploadPath)) {
+          return uploadPath;
+       }
+    }
     if (!filePath.startsWith(SANDBOX_DIR)) throw new Error('Access denied outside sandbox.');
     return filePath;
   }

@@ -20,33 +20,45 @@ import {
   BrainCircuit,
   Network,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Users
 } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 
-const coreNavigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, requiredLevel: 1 },
-  { name: 'AI Assistant', href: '/assistant', icon: MessageSquare, requiredLevel: 2 },
-  { name: 'Multimodal Intelligence', href: '/intelligence', icon: BrainCircuit, requiredLevel: 2 },
-  { name: 'Vision Inspection', href: '/vision', icon: Camera, requiredLevel: 2 },
-  { name: 'Agents', href: '/agents', icon: Bot, requiredLevel: 2 },
-  { name: 'Data Analysis', href: '/analysis', icon: LineChart, requiredLevel: 2 },
-];
-
-const governanceNavigation = [
-  { name: 'Knowledge Base', href: '/knowledge-base', icon: Database, requiredLevel: 2 },
-  { name: 'Documents', href: '/documents', icon: FileText, requiredLevel: 2 },
-  { name: 'Reports', href: '/reports', icon: FileOutput, requiredLevel: 3 },
-  { name: 'Audit & Security', href: '/audit', icon: ShieldCheck, requiredLevel: 4 },
-];
-
-const adminNavigation = [
-  { name: 'Data Sources', href: '/data-sources', icon: Network, requiredLevel: 3 },
-  { name: 'Users', href: '/users', icon: Network, requiredLevel: 4 },
-  { name: 'Model Manager', href: '/models', icon: Server, requiredLevel: 4 },
-  { name: 'Settings', href: '/settings', icon: Settings, requiredLevel: 4 },
+const navigationGroups = [
+  {
+    title: 'Workspace',
+    items: [
+      { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, requiredLevel: 1 },
+      { name: 'AI Workbench', href: '/assistant', icon: Bot, requiredLevel: 1 },
+      { name: 'Data Analysis', href: '/analysis', icon: LineChart, requiredLevel: 2 },
+      { name: 'Vision Analysis', href: '/vision', icon: Camera, requiredLevel: 2 },
+    ]
+  },
+  {
+    title: 'Data & Documents',
+    items: [
+      { name: 'Knowledge Base', href: '/knowledge-base', icon: Database, requiredLevel: 2 },
+      { name: 'Data Sources', href: '/data-sources', icon: Network, requiredLevel: 3 },
+      { name: 'Files', href: '/documents', icon: FileText, requiredLevel: 2 },
+    ]
+  },
+  {
+    title: 'Models & Intelligence',
+    items: [
+      { name: 'Models', href: '/models', icon: Server, requiredLevel: 4 },
+    ]
+  },
+  {
+    title: 'Administration',
+    items: [
+      { name: 'Users / RBAC', href: '/users', icon: Users, requiredLevel: 4 },
+      { name: 'Audit Logs', href: '/audit', icon: ShieldCheck, requiredLevel: 4 },
+      { name: 'Settings', href: '/settings', icon: Settings, requiredLevel: 4 },
+    ]
+  }
 ];
 
 const ROLE_LEVELS: Record<string, number> = {
@@ -65,34 +77,46 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const userRole = (session?.user as any)?.role?.toUpperCase() || 'VIEWER';
   const userLevel = ROLE_LEVELS[userRole] || 1;
 
-  const renderNavItems = (items: typeof coreNavigation) => {
-    return items.map((item) => {
-      if (userLevel < item.requiredLevel) return null;
-      const isActive = pathname.startsWith(item.href);
+  const renderNavGroups = (groups: typeof navigationGroups) => {
+    return groups.map((group) => {
+      const groupItems = group.items.filter(item => userLevel >= item.requiredLevel);
+      if (groupItems.length === 0) return null;
+      
       return (
-        <Link
-          key={item.name}
-          href={item.href}
-          className={cn(
-            isActive ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-800',
-            'group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors'
-          )}
-        >
-          <item.icon
-            className={cn(
-              isActive ? 'text-white' : 'text-zinc-400 group-hover:text-white',
-              'flex-shrink-0 mr-3 h-5 w-5 transition-colors'
-            )}
-            aria-hidden="true"
-          />
-          {item.name}
-        </Link>
+        <div key={group.title} className="px-3 mb-4">
+          <h3 className="px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
+            {group.title}
+          </h3>
+          <nav className="space-y-1">
+            {groupItems.map((item) => {
+              const isActive = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    isActive ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-800',
+                    'group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors'
+                  )}
+                >
+                  <item.icon
+                    className={cn(
+                      isActive ? 'text-white' : 'text-zinc-400 group-hover:text-white',
+                      'flex-shrink-0 mr-3 h-5 w-5 transition-colors'
+                    )}
+                    aria-hidden="true"
+                  />
+                  {item.name}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
       );
     });
   };
 
-  const hasAdminAccess = adminNavigation.some(item => userLevel >= item.requiredLevel);
-
+  // Removed unused hasAdminAccess
   return (
     <div className="flex h-screen bg-zinc-950 text-zinc-100 overflow-hidden">
       {/* Sidebar */}
@@ -107,47 +131,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         
         <div className="flex-1 overflow-y-auto py-4 space-y-6">
           
-          {/* Panel 1: Core */}
-          <div className="px-3">
-            <h3 className="px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-              Core Workflows
-            </h3>
-            <nav className="space-y-1">
-              {renderNavItems(coreNavigation)}
-            </nav>
+          {/* Grouped Navigation */}
+          <div className="py-2">
+            {renderNavGroups(navigationGroups)}
           </div>
-
-          {/* Panel 2: Governance */}
-          <div className="px-3">
-            <h3 className="px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-              Governance & Knowledge
-            </h3>
-            <nav className="space-y-1">
-              {renderNavItems(governanceNavigation)}
-            </nav>
-          </div>
-
-          {/* Collapsible Admin Panel */}
-          {hasAdminAccess && (
-            <div className="px-3">
-              <button
-                onClick={() => setAdminExpanded(!adminExpanded)}
-                className="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-md transition-colors"
-              >
-                <div className="flex items-center">
-                  <Settings className="flex-shrink-0 mr-3 h-5 w-5" />
-                  Administration
-                </div>
-                {adminExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              </button>
-              
-              {adminExpanded && (
-                <nav className="mt-1 ml-6 space-y-1 border-l border-zinc-800 pl-3">
-                  {renderNavItems(adminNavigation)}
-                </nav>
-              )}
-            </div>
-          )}
         </div>
 
         <div className="p-4 border-t border-zinc-800 bg-zinc-900">

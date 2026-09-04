@@ -76,7 +76,11 @@ export class OllamaProvider implements AIProvider {
         model: this.model,
         messages: messages.map(m => ({ role: m.role, content: m.content })),
         stream: false,
-        keep_alive: '5m'
+        keep_alive: '5m',
+        options: {
+          num_ctx: 2048,
+          temperature: 0.1
+        }
       }),
     });
 
@@ -104,7 +108,11 @@ export class OllamaProvider implements AIProvider {
         model: this.model,
         messages: messages.map(m => ({ role: m.role, content: m.content })),
         stream: true,
-        keep_alive: '5m'
+        keep_alive: '5m',
+        options: {
+          num_ctx: 2048,
+          temperature: 0.1
+        }
       }),
     });
 
@@ -143,25 +151,38 @@ export class OllamaProvider implements AIProvider {
   }
 
   async generateStructuredOutput<T>(options: StructuredOutputOptions<T>): Promise<T> {
-    // Ollama supports JSON format
-    const res = await fetch(`${this.baseUrl}/api/generate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: this.model,
-        prompt: options.prompt + '\nRespond ONLY in valid JSON format.',
-        format: 'json',
-        stream: false,
-        keep_alive: '5m'
-      }),
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
 
-    if (!res.ok) {
-      throw new Error(`Ollama JSON generation error: ${res.statusText}`);
+    try {
+      const res = await fetch(`${this.baseUrl}/api/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
+        body: JSON.stringify({
+          model: this.model,
+          prompt: options.prompt + '\nRespond ONLY in valid JSON format.',
+          format: 'json',
+          stream: false,
+          keep_alive: '5m',
+          options: {
+            num_ctx: 2048,
+            num_predict: 1024,
+            temperature: 0
+          }
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Ollama JSON generation error: ${res.statusText}`);
+      }
+
+      const data = await res.json();
+      const cleaned = data.response.replace(/```json/g, '').replace(/```/g, '').trim();
+      return JSON.parse(cleaned) as T;
+    } finally {
+      clearTimeout(timeoutId);
     }
-
-    const data = await res.json();
-    return JSON.parse(data.response) as T;
   }
 
   async generateEmbedding(text: string): Promise<number[]> {

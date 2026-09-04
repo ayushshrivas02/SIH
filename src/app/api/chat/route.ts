@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import { AIProviderManager } from '@/lib/ai/manager';
 import { prisma } from '@/lib/db';
 import { Orchestrator } from '@/lib/ai/orchestrator';
-import { searchDemoRag } from '@/lib/ai/demo-rag';
+import { searchKnowledgeBase } from '@/lib/ai/rag';
 import { requireRole } from '@/lib/rbac';
 
 export const POST = requireRole('USER', async (req: NextRequest) => {
@@ -97,9 +97,7 @@ export const POST = requireRole('USER', async (req: NextRequest) => {
         const k = parseInt(settingK || '4');
         const threshold = parseFloat(settingThresh || '0.35');
 
-        // Phase 7 uses the local demo_rag.db as the source of truth. Its vector
-        // entries are keyed by knowledge_chunks.id and are searched in memory.
-        const results = await searchDemoRag(lastMessage, k, threshold);
+        const results = await searchKnowledgeBase(lastMessage, k, threshold);
 
         if (results.length > 0) {
           ragContext = results.map(r => `--- Document: ${r.documentName} (Page ${r.pageNumber}, Section: ${r.section}) ---\n${r.content}`).join('\n\n');

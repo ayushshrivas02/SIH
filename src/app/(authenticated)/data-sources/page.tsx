@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Database, Plus, Trash2, CheckCircle2, AlertCircle, RefreshCw, Network, Server, HardDrive, UploadCloud } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useSession } from 'next-auth/react';
 
 type DatabaseConnection = {
   id: string;
@@ -24,6 +25,10 @@ type DatabaseConnection = {
 export default function DataSourcesPage() {
   const [connections, setConnections] = useState<DatabaseConnection[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  const { data: session } = useSession();
+  const userRole = (session?.user as any)?.role?.toUpperCase() || 'VIEWER';
+  const canModify = userRole === 'ADMIN' || userRole === 'MANAGER';
   
   // New connection state
   const [name, setName] = useState('');
@@ -173,12 +178,16 @@ export default function DataSourcesPage() {
           <TabsTrigger value="connections" className="data-[state=active]:bg-zinc-800">
             <Network className="mr-2 h-4 w-4" /> Active Connections
           </TabsTrigger>
-          <TabsTrigger value="add" className="data-[state=active]:bg-zinc-800">
-            <Plus className="mr-2 h-4 w-4" /> Add Remote URI
-          </TabsTrigger>
-          <TabsTrigger value="upload" className="data-[state=active]:bg-zinc-800">
-            <UploadCloud className="mr-2 h-4 w-4" /> Upload Local DB
-          </TabsTrigger>
+          {canModify && (
+            <TabsTrigger value="add" className="data-[state=active]:bg-zinc-800">
+              <Plus className="mr-2 h-4 w-4" /> Add Remote URI
+            </TabsTrigger>
+          )}
+          {canModify && (
+            <TabsTrigger value="upload" className="data-[state=active]:bg-zinc-800">
+              <UploadCloud className="mr-2 h-4 w-4" /> Upload Local DB
+            </TabsTrigger>
+          )}
         </TabsList>
         
         <TabsContent value="connections" className="mt-6">
@@ -203,7 +212,7 @@ export default function DataSourcesPage() {
                       <TableHead>Type</TableHead>
                       <TableHead>Connection URI</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      {canModify && <TableHead className="text-right">Actions</TableHead>}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -226,11 +235,13 @@ export default function DataSourcesPage() {
                             {conn.status}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-right">
-                          <Button variant="ghost" size="icon" className="text-red-400 hover:text-red-300 hover:bg-red-400/10">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
+                        {canModify && (
+                          <TableCell className="text-right">
+                            <Button variant="ghost" size="icon" className="text-red-400 hover:text-red-300 hover:bg-red-400/10">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        )}
                       </TableRow>
                     ))}
                   </TableBody>

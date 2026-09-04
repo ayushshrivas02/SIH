@@ -13,7 +13,9 @@ interface AssistantState {
   conversationId: string | null;
   messages: Message[];
   isLoading: boolean;
+  activeTaskId: string | null;
   setConversationId: (id: string | null) => void;
+  setActiveTaskId: (id: string | null) => void;
   addMessage: (msg: Message) => void;
   updateMessage: (id: string, content: string) => void;
   setMessages: (messages: Message[]) => void;
@@ -23,9 +25,11 @@ interface AssistantState {
 
 export const useAssistantStore = create<AssistantState>((set) => ({
   conversationId: null,
+  activeTaskId: null,
   messages: [],
   isLoading: false,
   setConversationId: (id) => set({ conversationId: id }),
+  setActiveTaskId: (id) => set({ activeTaskId: id }),
   addMessage: (msg) => set((state) => {
     return { messages: [...state.messages, msg] };
   }),
@@ -35,7 +39,7 @@ export const useAssistantStore = create<AssistantState>((set) => ({
   setMessages: (messages) => set({ messages }),
   setIsLoading: (isLoading) => set({ isLoading }),
   clearMessages: () => set(() => {
-    return { messages: [], conversationId: null };
+    return { messages: [], conversationId: null, activeTaskId: null };
   }),
 }));
 
