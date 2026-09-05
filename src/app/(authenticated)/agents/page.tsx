@@ -71,49 +71,49 @@ export default function AgentsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Agentic AI Engine</h1>
-          <p className="text-zinc-400">Launch autonomous planning agents for complex tasks.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Agentic AI Engine</h1>
+          <p className="text-muted-foreground mt-1">Launch autonomous planning agents for complex tasks.</p>
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         {agents.map((agent) => (
-          <Card key={agent.id} className="bg-zinc-900 border-zinc-800 flex flex-col">
+          <Card key={agent.id} className="flex flex-col">
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-2">
-                  <Bot className="h-6 w-6 text-blue-400" />
-                  <CardTitle className="text-xl">{agent.name}</CardTitle>
+                  <Bot className="h-6 w-6 text-primary" />
+                  <CardTitle className="text-xl text-foreground">{agent.name}</CardTitle>
                 </div>
-                <Badge variant="outline" className="text-zinc-400 border-zinc-700 bg-zinc-950">Ready</Badge>
+                <Badge variant="outline" className="text-muted-foreground border-border bg-muted/30">Ready</Badge>
               </div>
               <CardDescription className="pt-2">{agent.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 space-y-4">
               <div>
-                <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Tools</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Tools</p>
                 <div className="flex flex-wrap gap-2">
                   {agent.tools.map(tool => (
-                    <Badge key={tool} variant="secondary" className="bg-zinc-800 text-zinc-300">{tool}</Badge>
+                    <Badge key={tool} variant="secondary">{tool}</Badge>
                   ))}
                 </div>
               </div>
               <div>
-                <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Model Routing</p>
-                <p className="text-sm text-zinc-300">{agent.model}</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Model Routing</p>
+                <p className="text-sm text-foreground">{agent.model}</p>
               </div>
               <div className="pt-2">
                 <Input 
                   placeholder="Additional instructions..." 
-                  className="bg-zinc-950 border-zinc-700 text-zinc-200"
+                  className="bg-background border-border text-foreground"
                   value={input[agent.id] || ''}
                   onChange={(e) => setInput({ ...input, [agent.id]: e.target.value })}
                 />
               </div>
             </CardContent>
-            <CardFooter className="border-t border-zinc-800 pt-4 bg-zinc-950/50">
+            <CardFooter className="border-t border-border pt-4 bg-muted/20">
               <Button 
-                className="w-full bg-blue-600 hover:bg-blue-700" 
+                className="w-full" 
                 onClick={() => handleRunAgent(agent.id)}
                 disabled={running !== null}
               >

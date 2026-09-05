@@ -123,11 +123,11 @@ export default function DocumentsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Documents</h1>
-          <p className="text-zinc-400">Manage and process industrial documents.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Documents</h1>
+          <p className="text-muted-foreground mt-1">Manage and process industrial documents.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={fetchDocuments} className="bg-transparent border-zinc-700 hover:bg-zinc-800">
+          <Button variant="outline" onClick={fetchDocuments}>
             <RefreshCw className="mr-2 h-4 w-4" /> Refresh
           </Button>
           {canModify && (
@@ -148,23 +148,23 @@ export default function DocumentsPage() {
         </div>
       </div>
 
-      <Card className="bg-zinc-900 border-zinc-800">
+      <Card>
         <CardHeader>
           <CardTitle>Uploaded Documents</CardTitle>
           <CardDescription>Documents available for RAG and Agent analysis.</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8 text-zinc-500">Loading documents...</div>
+            <div className="text-center py-8 text-muted-foreground">Loading documents...</div>
           ) : documents.length === 0 ? (
             <div className="text-center py-12 flex flex-col items-center">
-              <FileText className="h-12 w-12 text-zinc-600 mb-4" />
-              <p className="text-zinc-400">No documents yet. Upload your first industrial document to begin.</p>
+              <FileText className="h-12 w-12 text-muted-foreground/50 mb-4" />
+              <p className="text-muted-foreground">No documents yet. Upload your first industrial document to begin.</p>
             </div>
           ) : (
             <Table>
               <TableHeader>
-                <TableRow className="border-zinc-800 hover:bg-transparent">
+                <TableRow className="border-border hover:bg-transparent">
                   <TableHead>Filename</TableHead>
                   <TableHead>Size</TableHead>
                   <TableHead>Chunks</TableHead>
@@ -175,34 +175,34 @@ export default function DocumentsPage() {
               </TableHeader>
               <TableBody>
                 {documents.map((doc) => (
-                  <TableRow key={doc.id} className="border-zinc-800 hover:bg-zinc-800/50">
-                    <TableCell className="font-medium flex items-center">
-                      <FileText className="mr-2 h-4 w-4 text-zinc-400" />
+                  <TableRow key={doc.id} className="border-border hover:bg-muted/50">
+                    <TableCell className="font-medium flex items-center text-foreground">
+                      <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
                       {doc.filename}
                     </TableCell>
-                    <TableCell className="text-zinc-400">
+                    <TableCell className="text-muted-foreground">
                       {(doc.size / 1024).toFixed(2)} KB
                     </TableCell>
-                    <TableCell className="text-zinc-400">
+                    <TableCell className="text-muted-foreground">
                       {doc._count?.chunks || 0}
                     </TableCell>
                     <TableCell>
                       <Badge variant={doc.status === 'READY' ? 'default' : 'secondary'} className={
-                        doc.status === 'READY' ? 'bg-green-600/20 text-green-400 hover:bg-green-600/30' : 
-                        doc.status === 'ERROR' ? 'bg-red-600/20 text-red-400' : 'bg-zinc-800 text-zinc-300'
+                        doc.status === 'READY' ? 'bg-emerald-500/20 text-emerald-500 hover:bg-emerald-500/30' : 
+                        doc.status === 'ERROR' ? 'bg-destructive/20 text-destructive hover:bg-destructive/30' : ''
                       }>
                         {doc.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-zinc-400">
+                    <TableCell className="text-muted-foreground">
                       {new Date(doc.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => handleView(doc.id)} className="text-zinc-400 hover:text-white hover:bg-zinc-700 mr-2">
+                      <Button variant="ghost" size="icon" onClick={() => handleView(doc.id)} className="text-muted-foreground hover:text-foreground hover:bg-muted mr-2">
                         <Eye className="h-4 w-4" />
                       </Button>
                       {canModify && (
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(doc.id)} className="text-red-400 hover:text-red-300 hover:bg-red-400/10">
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(doc.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       )}
@@ -218,16 +218,16 @@ export default function DocumentsPage() {
       {/* Document View Dialog */}
       {viewingDoc && (
         <Dialog open={!!viewingDoc} onOpenChange={(open) => !open && setViewingDoc(null)}>
-          <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-200 sm:max-w-[700px] max-h-[85vh] overflow-hidden flex flex-col">
+          <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-hidden flex flex-col">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2"><FileText className="h-5 w-5"/> {viewingDoc.filename}</DialogTitle>
+              <DialogTitle className="flex items-center gap-2"><FileText className="h-5 w-5 text-primary"/> {viewingDoc.filename}</DialogTitle>
               <DialogDescription>Raw Document Content Preview</DialogDescription>
             </DialogHeader>
-            <div className="flex-1 overflow-y-auto mt-4 bg-zinc-950 p-4 border border-zinc-800 rounded-md">
-              <pre className="text-sm whitespace-pre-wrap font-mono text-zinc-300">{viewingDoc.content}</pre>
+            <div className="flex-1 overflow-y-auto mt-4 bg-muted/30 p-4 border border-border rounded-md">
+              <pre className="text-sm whitespace-pre-wrap font-mono text-foreground">{viewingDoc.content}</pre>
             </div>
             <div className="mt-4 flex justify-end">
-              <Button variant="outline" onClick={() => setViewingDoc(null)} className="border-zinc-700 hover:bg-zinc-800">Close</Button>
+              <Button variant="outline" onClick={() => setViewingDoc(null)}>Close</Button>
             </div>
           </DialogContent>
         </Dialog>

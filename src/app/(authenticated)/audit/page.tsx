@@ -38,52 +38,52 @@ export default function AuditPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Audit & Security</h1>
-          <p className="text-zinc-400">Monitor system activity and sovereignty status.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Audit & Security</h1>
+          <p className="text-muted-foreground mt-1">Monitor system activity and sovereignty status.</p>
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-zinc-200">Local Processing</CardTitle>
-            <ShieldCheck className="h-4 w-4 text-green-400" />
+            <CardTitle className="text-sm font-medium text-foreground">Local Processing</CardTitle>
+            <ShieldCheck className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-400">ACTIVE</div>
-            <p className="text-xs text-zinc-400">All tasks run on-premise</p>
+            <div className="text-2xl font-bold text-emerald-500">ACTIVE</div>
+            <p className="text-xs text-muted-foreground">All tasks run on-premise</p>
           </CardContent>
         </Card>
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-zinc-200">External AI Calls</CardTitle>
-            <Server className="h-4 w-4 text-green-400" />
+            <CardTitle className="text-sm font-medium text-foreground">External AI Calls</CardTitle>
+            <Server className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-zinc-400">No data left the system</p>
+            <div className="text-2xl font-bold text-foreground">0</div>
+            <p className="text-xs text-muted-foreground">No data left the system</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="bg-zinc-900 border-zinc-800">
+      <Card>
         <CardHeader>
           <CardTitle>System Audit Log</CardTitle>
           <CardDescription>Immutable record of system activity.</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8 text-zinc-500">Loading audit logs...</div>
+            <div className="text-center py-8 text-muted-foreground">Loading audit logs...</div>
           ) : logs.length === 0 ? (
             <div className="text-center py-12 flex flex-col items-center">
-              <ShieldCheck className="h-12 w-12 text-zinc-600 mb-4" />
-              <p className="text-zinc-400">No audit events yet.</p>
+              <ShieldCheck className="h-12 w-12 text-muted-foreground/50 mb-4" />
+              <p className="text-muted-foreground">No audit events yet.</p>
             </div>
           ) : (
             <div className="max-h-[500px] overflow-y-auto pr-2">
               <Table>
-                <TableHeader className="sticky top-0 bg-zinc-900 z-10">
-                  <TableRow className="border-zinc-800 hover:bg-transparent">
+                <TableHeader className="sticky top-0 bg-card z-10">
+                  <TableRow className="border-border hover:bg-transparent">
                     <TableHead>Timestamp</TableHead>
                     <TableHead>User ID</TableHead>
                     <TableHead>Action</TableHead>
@@ -92,17 +92,17 @@ export default function AuditPage() {
                 </TableHeader>
                 <TableBody>
                   {logs.map((log) => (
-                    <TableRow key={log.id} className="border-zinc-800 hover:bg-zinc-800/50">
-                      <TableCell className="text-zinc-400 whitespace-nowrap">
+                    <TableRow key={log.id} className="border-border hover:bg-muted/50">
+                      <TableCell className="text-muted-foreground whitespace-nowrap">
                         {new Date(log.createdAt).toLocaleString()}
                       </TableCell>
-                      <TableCell className="font-mono text-xs text-zinc-500">
+                      <TableCell className="font-mono text-xs text-muted-foreground">
                         {log.userId || 'SYSTEM'}
                       </TableCell>
-                      <TableCell className="font-medium text-blue-400">
+                      <TableCell className="font-medium text-primary">
                         {log.action}
                       </TableCell>
-                      <TableCell className="text-zinc-300">
+                      <TableCell className="text-foreground">
                         {log.details}
                       </TableCell>
                     </TableRow>

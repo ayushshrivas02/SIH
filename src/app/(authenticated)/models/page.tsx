@@ -95,13 +95,13 @@ export default function ModelsPage() {
   const renderBadge = (status: string) => {
     switch (status) {
       case 'CONNECTED':
-        return <Badge className="bg-green-600/20 text-green-400 border-green-900"><CheckCircle className="mr-1 h-3 w-3" /> Connected</Badge>;
+        return <Badge className="bg-emerald-500/20 text-emerald-500 border-emerald-500/30 hover:bg-emerald-500/30"><CheckCircle className="mr-1 h-3 w-3" /> Connected</Badge>;
       case 'NOT CONFIGURED':
-        return <Badge variant="outline" className="text-zinc-500 border-zinc-700">Not Configured</Badge>;
+        return <Badge variant="outline" className="text-muted-foreground border-border">Not Configured</Badge>;
       case 'UNAVAILABLE':
-        return <Badge className="bg-red-600/20 text-red-400 border-red-900"><XCircle className="mr-1 h-3 w-3" /> Unavailable</Badge>;
+        return <Badge className="bg-destructive/20 text-destructive border-destructive/30 hover:bg-destructive/30"><XCircle className="mr-1 h-3 w-3" /> Unavailable</Badge>;
       case 'ERROR':
-        return <Badge className="bg-orange-600/20 text-orange-400 border-orange-900"><AlertCircle className="mr-1 h-3 w-3" /> Error</Badge>;
+        return <Badge className="bg-yellow-500/20 text-yellow-500 border-yellow-500/30 hover:bg-yellow-500/30"><AlertCircle className="mr-1 h-3 w-3" /> Error</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -124,7 +124,7 @@ export default function ModelsPage() {
 
     if (!provider) {
       return (
-        <Card className="bg-zinc-900 border-zinc-800 flex flex-col">
+        <Card className="flex flex-col">
           <CardHeader>
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-2">
@@ -136,10 +136,10 @@ export default function ModelsPage() {
             <CardDescription>{desc}</CardDescription>
           </CardHeader>
           <CardContent className="flex-1 space-y-4">
-            <p className="text-sm text-zinc-500">No provider configured for this capability.</p>
+            <p className="text-sm text-muted-foreground">No provider configured for this capability.</p>
             
-            <div className="pt-4 border-t border-zinc-800 mt-auto">
-              <span className="text-zinc-400 text-sm block mb-2">Provider Engine</span>
+            <div className="pt-4 border-t border-border mt-auto">
+              <span className="text-muted-foreground text-sm block mb-2">Provider Engine</span>
               <Select 
                 value={currentProvider} 
                 onValueChange={async (val: string | null) => { 
@@ -149,10 +149,10 @@ export default function ModelsPage() {
                   }
                 }}
               >
-                <SelectTrigger className="w-full bg-zinc-950 border-zinc-800">
+                <SelectTrigger className="w-full bg-background border-input text-foreground">
                   <SelectValue placeholder="Select Provider" />
                 </SelectTrigger>
-                <SelectContent className="bg-zinc-950 border-zinc-800 text-zinc-200">
+                <SelectContent>
                   <SelectItem value="ollama">Ollama (Local)</SelectItem>
                   <SelectItem value="openai-compatible">OpenAI Compatible (Remote)</SelectItem>
                 </SelectContent>
@@ -166,7 +166,7 @@ export default function ModelsPage() {
     const currentModel = settings[settingKey] || (provider.models && provider.models.length > 0 ? provider.models[0].name : '');
 
     return (
-      <Card className="bg-zinc-900 border-zinc-800 flex flex-col">
+      <Card className="flex flex-col">
         <CardHeader>
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-2">
@@ -178,55 +178,55 @@ export default function ModelsPage() {
           <CardDescription>{desc}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 flex-1">
-          <div className="flex justify-between border-b border-zinc-800 pb-2">
-            <span className="text-zinc-400 text-sm">Provider</span>
-            <span className="text-zinc-200 text-sm">{provider.name}</span>
+          <div className="flex justify-between border-b border-border pb-2">
+            <span className="text-muted-foreground text-sm">Provider</span>
+            <span className="text-foreground text-sm">{provider.name}</span>
           </div>
-          <div className="flex justify-between border-b border-zinc-800 pb-2">
-            <span className="text-zinc-400 text-sm">Type</span>
-            <span className="text-zinc-200 text-sm capitalize">{provider.type}</span>
+          <div className="flex justify-between border-b border-border pb-2">
+            <span className="text-muted-foreground text-sm">Type</span>
+            <span className="text-foreground text-sm capitalize">{provider.type}</span>
           </div>
           {provider.health.latency !== undefined && (
-            <div className="flex justify-between border-b border-zinc-800 pb-2">
-              <span className="text-zinc-400 text-sm">Latency</span>
-              <span className="text-zinc-200 text-sm">{provider.health.latency} ms</span>
+            <div className="flex justify-between border-b border-border pb-2">
+              <span className="text-muted-foreground text-sm">Latency</span>
+              <span className="text-foreground text-sm">{provider.health.latency} ms</span>
             </div>
           )}
           {provider.health.error && (
-            <div className="flex justify-between pb-2 text-sm text-red-400">
-              <span className="text-zinc-400 mr-2">Error:</span>
+            <div className="flex justify-between pb-2 text-sm text-destructive">
+              <span className="text-muted-foreground mr-2">Error:</span>
               <span className="truncate">{provider.health.error}</span>
             </div>
           )}
 
           <div>
-            <span className="text-zinc-400 text-sm block mb-1">Capabilities</span>
+            <span className="text-muted-foreground text-sm block mb-1">Capabilities</span>
             {renderCapabilities(provider.capabilities)}
           </div>
           
           <div className="pt-2">
-            <span className="text-zinc-400 text-sm block mb-2">Default Model</span>
+            <span className="text-muted-foreground text-sm block mb-2">Default Model</span>
             <Select 
               value={currentModel} 
               onValueChange={(val: string | null) => { if (val) updateSetting(settingKey, val); }}
               disabled={!provider.models || provider.models.length === 0}
             >
-              <SelectTrigger className="w-full bg-zinc-950 border-zinc-800">
+              <SelectTrigger className="w-full bg-background border-input text-foreground">
                 <SelectValue placeholder="Select Model" />
               </SelectTrigger>
-              <SelectContent className="bg-zinc-950 border-zinc-800 text-zinc-200">
+              <SelectContent>
                 {provider.models && provider.models.map(m => (
                   <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
             {(!provider.models || provider.models.length === 0) && provider.health.status === 'CONNECTED' && (
-              <p className="text-xs text-zinc-500 mt-2">No models found for this provider.</p>
+              <p className="text-xs text-muted-foreground mt-2">No models found for this provider.</p>
             )}
           </div>
 
-          <div className="pt-4 border-t border-zinc-800 mt-4">
-            <span className="text-zinc-400 text-sm block mb-2">Provider Engine</span>
+          <div className="pt-4 border-t border-border mt-4">
+            <span className="text-muted-foreground text-sm block mb-2">Provider Engine</span>
             <Select 
               value={currentProvider} 
               onValueChange={async (val: string | null) => { 
@@ -236,10 +236,10 @@ export default function ModelsPage() {
                 }
               }}
             >
-              <SelectTrigger className="w-full bg-zinc-950 border-zinc-800">
+              <SelectTrigger className="w-full bg-background border-input text-foreground">
                 <SelectValue placeholder="Select Provider" />
               </SelectTrigger>
-              <SelectContent className="bg-zinc-950 border-zinc-800 text-zinc-200">
+              <SelectContent>
                 <SelectItem value="ollama">Ollama (Local)</SelectItem>
                 <SelectItem value="openai-compatible">OpenAI Compatible (Remote)</SelectItem>
               </SelectContent>
@@ -255,17 +255,17 @@ export default function ModelsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Model Manager</h1>
-          <p className="text-zinc-400">Manage, monitor, and configure AI providers and models.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Model Manager</h1>
+          <p className="text-muted-foreground mt-1">Manage, monitor, and configure AI providers and models.</p>
           {lastChecked && (
-             <p className="text-xs text-zinc-500 mt-1">Last checked: {lastChecked.toLocaleTimeString()}</p>
+             <p className="text-xs text-muted-foreground mt-1">Last checked: {lastChecked.toLocaleTimeString()}</p>
           )}
         </div>
         <div className="flex gap-2">
-          <Button onClick={fetchHealth} disabled={loading} variant="outline" className="border-zinc-700 bg-zinc-900">
+          <Button onClick={fetchHealth} disabled={loading} variant="outline" className="border-border bg-background">
             {loading ? 'Refreshing...' : 'Refresh Models'}
           </Button>
-          <Button onClick={fetchHealth} disabled={loading} className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={fetchHealth} disabled={loading}>
             {loading ? 'Testing...' : 'Test Connection'}
           </Button>
         </div>
