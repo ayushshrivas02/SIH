@@ -21,7 +21,8 @@ import {
   Network,
   ChevronDown,
   ChevronRight,
-  Users
+  Users,
+  Terminal
 } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,7 @@ const navigationGroups = [
     items: [
       { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, requiredLevel: 1 },
       { name: 'AI Workbench', href: '/assistant', icon: Bot, requiredLevel: 1 },
+      { name: 'Code Studio', href: '/code-studio', icon: Terminal, requiredLevel: 2 },
       { name: 'Data Analysis', href: '/analysis', icon: LineChart, requiredLevel: 2 },
       { name: 'Vision Analysis', href: '/vision', icon: Camera, requiredLevel: 2 },
     ]

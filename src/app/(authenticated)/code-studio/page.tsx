@@ -18,30 +18,27 @@ interface CodeBlock {
 
 export default function CodeGenerationStudioPage() {
   const [prompt, setPrompt] = useState('');
-  const [model, setModel] = useState('qwen2.5-coder-14b');
+  const [model, setModel] = useState('auto');
+  const [availableModels, setAvailableModels] = useState<{id: string, name: string}[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [codeBlocks, setCodeBlocks] = useState<CodeBlock[]>([]);
   const [activeTab, setActiveTab] = useState(0);
   const [rawResponse, setRawResponse] = useState('');
   const [error, setError] = useState('');
   
-  // Fake stats that fluctuate slightly for realism
-  const [stats, setStats] = useState({ vram: '14.2', tokens: '0' });
   const { toast } = useToast();
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (isGenerating) {
-        setStats({
-          vram: (14 + Math.random() * 2).toFixed(1),
-          tokens: (24 + Math.random() * 12).toFixed(1)
-        });
-      } else {
-        setStats(prev => ({ ...prev, tokens: '0' }));
-      }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [isGenerating]);
+    fetch('/api/models')
+      .then(res => res.json())
+      .then(data => {
+        if (data.models && data.models.length > 0) {
+          setAvailableModels(data.models);
+          setModel(data.models[0].id);
+        }
+      })
+      .catch(e => console.error("Failed to load models:", e));
+  }, []);
 
   // Very basic regex to parse markdown code blocks
   const parseCodeBlocks = (text: string) => {
@@ -81,14 +78,15 @@ export default function CodeGenerationStudioPage() {
     setRawResponse('');
 
     try {
-      const response = await fetch('http://localhost:8000/api/generate-code', {
+      const response = await fetch('/api/code-gen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, model }),
       });
 
       if (!response.ok) {
-        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Server returned ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -124,19 +122,48 @@ export default function CodeGenerationStudioPage() {
     }
   };
 
-  const runSandbox = () => {
+  const runSandbox = async () => {
+    if (!codeBlocks[activeTab]) return;
+
     toast({ 
       title: "Sandbox Initiated", 
       description: "Executing code in secure isolated container...",
       duration: 3000
     });
-    // Mock sandbox execution
-    setTimeout(() => {
-      toast({ 
-        title: "Execution Complete", 
-        description: "Process exited with code 0.",
+
+    try {
+      const response = await fetch('/api/sandbox', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: codeBlocks[activeTab].code }),
       });
-    }, 2000);
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast({ 
+          title: "Execution Complete", 
+          description: `Result: ${data.result}`,
+        });
+        
+        // Append logs or result to the raw response window
+        const logsText = data.logs && data.logs.length > 0 ? `\nLogs:\n${data.logs.join('\n')}` : '';
+        setRawResponse((prev) => `${prev}\n\n--- Sandbox Execution ---\nResult: ${data.result}${logsText}\nLatency: ${data.latency}ms`);
+        setActiveTab(-1); // Switch to raw output view
+      } else {
+        toast({
+          title: "Execution Failed",
+          description: data.error || data.result,
+          variant: "destructive"
+        });
+      }
+    } catch (err: any) {
+      toast({
+        title: "Sandbox Error",
+        description: err.message || "Failed to reach sandbox API.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -154,9 +181,13 @@ export default function CodeGenerationStudioPage() {
               <SelectValue placeholder="Select Model" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="qwen2.5-coder-14b">Qwen2.5-Coder 14B</SelectItem>
-              <SelectItem value="deepseek-r1">DeepSeek-R1 (Local)</SelectItem>
-              <SelectItem value="llama-3.3-70b-instruct">Llama 3.3 70B</SelectItem>
+              {availableModels.length > 0 ? (
+                availableModels.map((m) => (
+                  <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                ))
+              ) : (
+                <SelectItem value="auto">Auto (Default)</SelectItem>
+              )}
             </SelectContent>
           </Select>
         </div>
@@ -287,14 +318,14 @@ export default function CodeGenerationStudioPage() {
             <div className="h-4 w-px bg-border hidden sm:block"></div>
             <div className="flex items-center gap-2 hidden sm:flex">
               <MemoryStick className="w-4 h-4 text-indigo-400" />
-              <span className="text-xs font-mono text-muted-foreground">GPU VRAM: <span className="text-foreground font-semibold">{stats.vram} GB</span> / 24 GB</span>
+              <span className="text-xs font-mono text-muted-foreground">Hardware: <span className="text-foreground font-semibold">Local Node</span></span>
             </div>
          </div>
          
          <div className="flex items-center gap-2">
             <Cpu className={`w-4 h-4 ${isGenerating ? 'text-amber-500 animate-pulse' : 'text-muted-foreground'}`} />
             <span className="text-xs font-mono text-muted-foreground">
-              Inference: <span className="text-foreground font-semibold">{stats.tokens}</span> tokens/sec
+              Execution Environment: <span className="text-foreground font-semibold">Secure VM</span>
             </span>
          </div>
       </div>
