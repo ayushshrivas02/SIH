@@ -5,7 +5,15 @@ import { requireRole } from '@/lib/rbac';
 export const GET = requireRole('USER', async (req: NextRequest) => {
   try {
     const provider = await AIProviderManager.getProviderForTask('CHAT');
-    const models = await provider.getModels();
+    const allModels = await provider.getModels();
+    
+    // Filter out embedding-only models that cannot handle chat
+    const EMBEDDING_ONLY_PATTERNS = [
+      'nomic-embed', 'all-minilm', 'mxbai-embed', 'snowflake-arctic-embed', 'bge-'
+    ];
+    const models = allModels.filter(m => 
+      !EMBEDDING_ONLY_PATTERNS.some(pattern => m.name.toLowerCase().includes(pattern))
+    );
     
     return NextResponse.json({ models });
   } catch (error) {

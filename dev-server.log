@@ -1,59 +1,508 @@
 
 > sovereign-ai-workbench@0.1.0 dev
-> next dev
+> next dev -p 3000
 
- ⚠ Port 3000 is in use, trying 3001 instead.
   ▲ Next.js 14.2.15
-  - Local:        http://localhost:3001
+  - Local:        http://localhost:3000
   - Environments: .env
 
  ✓ Starting...
- ✓ Ready in 1724ms
+ ✓ Ready in 3.4s
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 759ms (179 modules)
+ GET /api/auth/session 200 in 2909ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 6s (1101 modules)
+ GET /dashboard 200 in 6648ms
+ ✓ Compiled in 749ms (473 modules)
+ ✓ Compiled /favicon.ico in 264ms (656 modules)
+ GET /favicon.ico 200 in 386ms
+ GET /dashboard 200 in 171ms
+ GET /favicon.ico 200 in 49ms
+ GET /api/auth/session 200 in 1489ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/auth/session 200 in 180ms
+ ○ Compiling /api/models/health ...
+ ✓ Compiled /api/models/health in 838ms (1129 modules)
+ GET /api/tasks 404 in 1476ms
+ GET /api/dashboard/stats 200 in 1521ms
+ GET /api/tasks 404 in 82ms
+ GET /api/models/health 200 in 1554ms
+ GET /api/dashboard/stats 200 in 43ms
+ GET /api/models/health 200 in 40ms
+ GET /api/auth/session 200 in 1457ms
+ GET /api/auth/session 200 in 33ms
  ○ Compiling /assistant ...
- ✓ Compiled /assistant in 1728ms (1031 modules)
- GET /assistant 200 in 1962ms
- ✓ Compiled in 249ms (513 modules)
- ✓ Compiled in 47ms (497 modules)
- GET /assistant 200 in 71ms
- ○ Compiling /favicon.ico ...
- ✓ Compiled /favicon.ico in 559ms (668 modules)
- ✓ Compiled (696 modules)
- GET /favicon.ico 200 in 918ms
- GET /api/auth/session 200 in 2123ms
- GET /api/auth/session 200 in 857ms
- GET /api/auth/session 200 in 12ms
- GET /api/auth/session 200 in 18ms
- GET /api/auth/session 200 in 22ms
- GET /api/auth/session 200 in 23ms
- ○ Compiling /documents ...
- ✓ Compiled /documents in 931ms (1217 modules)
- ✓ Compiled /api/documents in 143ms (712 modules)
- GET /api/documents 200 in 197ms
- GET /api/documents 200 in 14ms
- ○ Compiling /api/chat ...
- ✓ Compiled /api/chat in 731ms (716 modules)
-Chat error: [TypeError: fetch failed] {
-  [cause]: Error: connect ECONNREFUSED 127.0.0.1:11434
-      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2017:16) {
-    errno: -4078,
-    code: 'ECONNREFUSED',
-    syscall: 'connect',
-    address: '127.0.0.1',
-    port: 11434
-  }
-}
- POST /api/chat 503 in 821ms
+ ✓ Compiled /assistant in 4.8s (2246 modules)
  ○ Compiling /vision ...
- ✓ Compiled /vision in 825ms (1238 modules)
- ✓ Compiled /api/vision in 179ms (726 modules)
-Vision analysis error: [TypeError: fetch failed] {
-  [cause]: Error: connect ECONNREFUSED 127.0.0.1:11434
-      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2017:16) {
-    errno: -4078,
-    code: 'ECONNREFUSED',
-    syscall: 'connect',
-    address: '127.0.0.1',
-    port: 11434
-  }
-}
- POST /api/vision 500 in 274ms
+ ✓ Compiled /vision in 2.6s (2284 modules)
+ ○ Compiling /analysis ...
+ ✓ Compiled /analysis in 2.8s (3254 modules)
+ GET /api/auth/session 200 in 1449ms
+ GET /api/auth/session 200 in 20ms
+ GET /api/auth/session 200 in 1500ms
+ GET /api/auth/session 200 in 44ms
+ GET /analysis 200 in 487ms
+ GET /favicon.ico 200 in 41ms
+ GET /api/auth/session 200 in 1327ms
+ GET /api/auth/session 200 in 22ms
+ GET /api/auth/session 200 in 19ms
+ GET /api/auth/session 200 in 19ms
+ GET /api/auth/session 200 in 1480ms
+ GET /api/auth/session 200 in 54ms
+ GET /analysis 200 in 75ms
+ GET /favicon.ico 200 in 49ms
+ GET /api/auth/session 200 in 1410ms
+ GET /api/auth/session 200 in 31ms
+ GET /api/auth/session 200 in 37ms
+ GET /api/auth/session 200 in 35ms
+ ✓ Compiled in 1534ms (2637 modules)
+ GET /api/auth/session 200 in 1600ms
+ GET /api/auth/session 200 in 34ms
+ GET /analysis 200 in 446ms
+ GET /favicon.ico 200 in 75ms
+ GET /api/auth/session 200 in 1482ms
+ GET /api/auth/session 200 in 34ms
+ GET /api/auth/session 200 in 92ms
+ GET /api/auth/session 200 in 48ms
+ ○ Compiling /api/models/health ...
+ ✓ Compiled /assistant in 1329ms (2637 modules)
+ ✓ Compiled /knowledge-base in 1ms (1748 modules)
+ ✓ Compiled in 2.6s (3237 modules)
+ GET /api/dashboard/stats 200 in 5034ms
+ GET /api/models/health 200 in 5086ms
+ GET /api/tasks 404 in 5089ms
+ GET /api/tasks 404 in 191ms
+ ○ Compiling /data-sources ...
+ ✓ Compiled /data-sources in 1736ms (3266 modules)
+ GET /api/dashboard/stats 200 in 1894ms
+ GET /api/models/health 200 in 1906ms
+ ○ Compiling /api/data-sources ...
+ ✓ Compiled /api/data-sources in 569ms (1781 modules)
+ GET /api/data-sources 200 in 644ms
+ GET /api/data-sources 200 in 18ms
+ GET /api/auth/session 200 in 1298ms
+ GET /api/auth/session 200 in 25ms
+ GET /api/auth/session 200 in 1477ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 2.8s (2811 modules)
+ GET /antigravity 404 in 3224ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 553ms (1273 modules)
+ GET /api/auth/session 200 in 2268ms
+ GET /api/auth/session 200 in 39ms
+ GET /data-sources 200 in 340ms
+ GET /_next/static/css/app/layout.css?v=1788638415563 404 in 78ms
+ GET /_next/static/chunks/main-app.js?v=1788638415563 404 in 107ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 107ms
+ GET /_next/static/chunks/app/(authenticated)/data-sources/page.js 404 in 106ms
+ GET /_next/static/chunks/app/(authenticated)/layout.js 404 in 105ms
+ ✓ Compiled /favicon.ico in 412ms (1301 modules)
+ GET /favicon.ico 200 in 530ms
+ GET /antigravity 404 in 126ms
+ GET /antigravity 404 in 79ms
+ GET /_next/static/css/app/layout.css?v=1788638435741 404 in 44ms
+ GET /_next/static/chunks/main-app.js?v=1788638435741 404 in 66ms
+ GET /_next/static/css/app/layout.css?v=1788638435864 404 in 54ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 72ms
+ GET /_next/static/chunks/main-app.js?v=1788638435864 404 in 65ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 30ms
+ GET /analysis 200 in 194ms
+ GET /_next/static/css/app/layout.css?v=1788638437783 404 in 21ms
+ GET /_next/static/chunks/main-app.js?v=1788638437783 404 in 31ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 28ms
+ GET /_next/static/chunks/app/(authenticated)/analysis/page.js 404 in 23ms
+ GET /_next/static/chunks/app/(authenticated)/layout.js 404 in 19ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 756ms (2999 modules)
+ GET /login 200 in 854ms
+ GET /_next/static/css/app/layout.css?v=1788638439572 404 in 22ms
+ GET /_next/static/chunks/main-app.js?v=1788638439572 404 in 30ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 17ms
+ ✓ Compiled in 841ms (1690 modules)
+ ✓ Compiled in 406ms (1690 modules)
+ ✓ Compiled in 357ms (1690 modules)
+ ✓ Compiled in 1616ms (2812 modules)
+ ○ Compiling /antigravity ...
+ ⨯ ./src/app/components/AntigravityCanvas.tsx:3:1
+Module not found: Can't resolve '@react-three/fiber'
+[0m [90m 1 |[39m [32m'use client'[39m[33m;[39m[0m
+[0m [90m 2 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mCanvas[39m } [36mfrom[39m [32m'@react-three/fiber'[39m[33m;[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 4 |[39m [36mimport[39m { [33mStars[39m[33m,[39m [33mLoader[39m } [36mfrom[39m [32m'@react-three/drei'[39m[33m;[39m[0m
+[0m [90m 5 |[39m [36mimport[39m { [33mFloatingShapes[39m } [36mfrom[39m [32m'./FloatingShapes'[39m[33m;[39m[0m
+[0m [90m 6 |[39m [36mimport[39m { useEffect } [36mfrom[39m [32m'react'[39m[33m;[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+ ⨯ ./src/app/components/AntigravityCanvas.tsx:3:1
+Module not found: Can't resolve '@react-three/fiber'
+[0m [90m 1 |[39m [32m'use client'[39m[33m;[39m[0m
+[0m [90m 2 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mCanvas[39m } [36mfrom[39m [32m'@react-three/fiber'[39m[33m;[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 4 |[39m [36mimport[39m { [33mStars[39m[33m,[39m [33mLoader[39m } [36mfrom[39m [32m'@react-three/drei'[39m[33m;[39m[0m
+[0m [90m 5 |[39m [36mimport[39m { [33mFloatingShapes[39m } [36mfrom[39m [32m'./FloatingShapes'[39m[33m;[39m[0m
+[0m [90m 6 |[39m [36mimport[39m { useEffect } [36mfrom[39m [32m'react'[39m[33m;[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+ GET /antigravity 500 in 7177ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\api\data-sources'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/api/data-sources/route' in C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server for build dependencies doesn't lead to expected result 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\api\data-sources\route.js', but to 'Error: Can't resolve '../../../../.next/server/app/api/data-sources/route' in 'C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/api/data-sources/route (expected C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\api\data-sources\route.js)
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+ ✓ Compiled /_not-found in 4.9s (3386 modules)
+ ○ Compiling /antigravity ...
+ ✓ Compiled /antigravity in 6.2s (3963 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /antigravity 200 in 7001ms
+ GET /_next/static/webpack/a2be6983de73e77a.webpack.hot-update.json 404 in 7010ms
+ GET /antigravity 200 in 47ms
+ GET /_next/static/chunks/main-app.js?v=1788639316494 404 in 18ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 14ms
+ GET /_next/static/chunks/app/(authenticated)/layout.js 404 in 17ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 509ms (1744 modules)
+ GET /favicon.ico 200 in 587ms
+ GET /antigravity 200 in 201ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 82ms
+ GET /_next/static/chunks/app/(authenticated)/layout.js 404 in 75ms
+ GET /_next/static/chunks/main-app.js?v=1788639344114 404 in 81ms
+ GET /favicon.ico 200 in 27ms
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/api/data-sources/route' in C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server for build dependencies doesn't lead to expected result 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\api\data-sources\route.js', but to 'Error: Can't resolve '../../../../.next/server/app/api/data-sources/route' in 'C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/api/data-sources/route (expected C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\api\data-sources\route.js)
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\swc\index.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\swc\index.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\vendor-chunks\clsx.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/clsx' in C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server for build dependencies doesn't lead to expected result 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\vendor-chunks\clsx.js', but to 'Error: Can't resolve './vendor-chunks/clsx' in 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/clsx (expected C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\vendor-chunks\clsx.js)
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\webpack-runtime.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\_not-found\page.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\_not-found\page.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\swc\index.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\swc\index.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/class-variance-authority' in C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server for build dependencies doesn't lead to expected result 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\vendor-chunks\class-variance-authority.js', but to 'Error: Can't resolve './vendor-chunks/class-variance-authority' in 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/class-variance-authority (expected C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\vendor-chunks\class-variance-authority.js)
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\webpack-runtime.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\_not-found\page.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\_not-found\page.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\swc\index.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\swc\index.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/use-sync-external-store' in C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server for build dependencies doesn't lead to expected result 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\vendor-chunks\use-sync-external-store.js', but to 'Error: Can't resolve './vendor-chunks/use-sync-external-store' in 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/use-sync-external-store (expected C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\vendor-chunks\use-sync-external-store.js)
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\webpack-runtime.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\_not-found\page.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\_not-found\page.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\swc\index.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\swc\index.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/@floating-ui' in C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server for build dependencies doesn't lead to expected result 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\vendor-chunks\@floating-ui.js', but to 'Error: Can't resolve './vendor-chunks/@floating-ui' in 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/@floating-ui (expected C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\vendor-chunks\@floating-ui.js)
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\webpack-runtime.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\_not-found\page.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\_not-found\page.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\swc\index.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\swc\index.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/tailwind-merge' in C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server for build dependencies doesn't lead to expected result 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\vendor-chunks\tailwind-merge.js', but to 'Error: Can't resolve './vendor-chunks/tailwind-merge' in 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/tailwind-merge (expected C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\vendor-chunks\tailwind-merge.js)
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\webpack-runtime.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\_not-found\page.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\_not-found\page.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\swc\index.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\swc\index.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+ GET /antigravity 200 in 84ms
+ GET /_next/static/chunks/app/(authenticated)/layout.js 404 in 75ms
+ GET /_next/static/chunks/main-app.js?v=1788639386185 404 in 71ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 74ms
+ GET /favicon.ico 200 in 27ms
+ GET /antigravity 200 in 78ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 74ms
+ GET /_next/static/chunks/main-app.js?v=1788639454160 404 in 83ms
+ GET /_next/static/chunks/app/(authenticated)/layout.js 404 in 72ms
+ GET /favicon.ico 200 in 26ms
+ ✓ Compiled in 1328ms (3386 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\_not-found'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/_not-found/page' in C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server for build dependencies doesn't lead to expected result 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\_not-found\page.js', but to 'Error: Can't resolve '../../../../.next/server/app/_not-found/page' in 'C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/_not-found/page (expected C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\_not-found\page.js)
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+ ✓ Compiled in 862ms (2264 modules)
+ ✓ Compiled in 577ms (2263 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\cache\webpack\client-development\3.pack.gz_' -> 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\cache\webpack\client-development\3.pack.gz'
+ ✓ Compiled in 1817ms (3385 modules)
+ ✓ Compiled in 1838ms (2812 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\login\page.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/login/page' in C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server for build dependencies doesn't lead to expected result 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\login\page.js', but to 'Error: Can't resolve '../../../../.next/server/app/login/page' in 'C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/login/page (expected C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\login\page.js)
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/api/data-sources/route' in C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server for build dependencies doesn't lead to expected result 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\api\data-sources\route.js', but to 'Error: Can't resolve '../../../../.next/server/app/api/data-sources/route' in 'C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/api/data-sources/route (expected C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\api\data-sources\route.js)
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\login\page.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/login/page' in C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server for build dependencies doesn't lead to expected result 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\login\page.js', but to 'Error: Can't resolve '../../../../.next/server/app/login/page' in 'C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/login/page (expected C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\login\page.js)
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/api/data-sources/route' in C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server for build dependencies doesn't lead to expected result 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\api\data-sources\route.js', but to 'Error: Can't resolve '../../../../.next/server/app/api/data-sources/route' in 'C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/api/data-sources/route (expected C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\api\data-sources\route.js)
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+ ○ Compiling / ...
+ ✓ Compiled / in 2.1s (2805 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 935ms (2808 modules)
+ GET / 404 in 3189ms
+ GET / 404 in 36ms
+ GET / 404 in 49ms
+ GET / 404 in 28ms
+ GET / 404 in 97ms
+ GET / 404 in 86ms
+ GET / 404 in 92ms
+ GET / 404 in 30ms
+ GET / 404 in 34ms
+ GET / 404 in 30ms
+ GET / 404 in 93ms
+ GET / 404 in 101ms
+ GET / 404 in 87ms
+ GET / 404 in 11ms
+ GET / 404 in 12ms
+ GET / 404 in 12ms
+ GET / 404 in 23ms
+ GET / 404 in 46ms
+ GET / 404 in 73ms
+ GET / 404 in 33ms
+ GET / 404 in 33ms
+ GET / 404 in 21ms
+ GET / 404 in 27ms
+ GET / 404 in 37ms
+ GET / 404 in 81ms
+ GET / 404 in 62ms
+ GET / 404 in 29ms
+ GET / 404 in 54ms
+ GET / 404 in 25ms
+ GET / 404 in 82ms
+ GET / 404 in 33ms
+ GET / 404 in 34ms
+ GET / 404 in 26ms
+ GET / 404 in 90ms
+ GET / 404 in 86ms
+ GET / 404 in 74ms
+ GET / 404 in 58ms
+ GET / 404 in 75ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\(authenticated)\antigravity'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/(authenticated)/antigravity/page' in C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server for build dependencies doesn't lead to expected result 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\(authenticated)\antigravity\page.js', but to 'Error: Can't resolve '../../../../.next/server/app/(authenticated)/antigravity/page' in 'C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/(authenticated)/antigravity/page (expected C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\(authenticated)\antigravity\page.js)
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/favicon.ico/route' in C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server for build dependencies doesn't lead to expected result 'C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\favicon.ico\route.js', but to 'Error: Can't resolve '../../../../.next/server/app/favicon.ico/route' in 'C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/favicon.ico/route (expected C:\Users\asus\SIH2\sovereign-ai-workbench\.next\server\app\favicon.ico\route.js)
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs C:\Users\asus\SIH2\sovereign-ai-workbench\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+ GET / 404 in 22ms
+ GET / 404 in 94ms
+ GET / 404 in 85ms
+ GET / 404 in 79ms
+ GET / 404 in 36ms
+ GET / 404 in 87ms
+ GET / 404 in 67ms
+ GET / 404 in 33ms
+ GET / 404 in 43ms
+ GET / 404 in 91ms
+ GET / 404 in 75ms
+ GET / 404 in 34ms
+ GET / 404 in 72ms
+ GET / 404 in 88ms
+ GET / 404 in 86ms
+ GET / 404 in 86ms
+ GET / 404 in 85ms
+ GET / 404 in 28ms
+ GET / 404 in 38ms
+ GET / 404 in 21ms
+ GET / 404 in 25ms
+ GET / 404 in 30ms
+ GET / 404 in 21ms
+[?25h

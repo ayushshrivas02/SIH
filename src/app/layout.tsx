@@ -18,6 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={inter.className}>
+        <div className="fixed inset-0 z-[-1] bg-noise"></div>
         <Providers>
           {children}
         </Providers>
