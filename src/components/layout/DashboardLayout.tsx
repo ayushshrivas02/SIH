@@ -26,7 +26,8 @@ import {
 } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { StatusBadge } from '@/components/ui/status-badge';
 
 const navigationGroups = [
   {
@@ -97,18 +98,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    isActive ? 'bg-primary/10 text-primary shadow-[inset_2px_0_0_0_rgba(var(--primary),1)]' : 'text-muted-foreground hover:text-foreground hover:bg-muted/30',
-                    'group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors'
+                    isActive 
+                      ? 'bg-primary/10 text-primary border-l-2 border-primary shadow-[inset_0_0_20px_rgba(var(--primary),0.1)]' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-white/5 border-l-2 border-transparent',
+                    'group flex items-center px-4 py-2.5 text-sm font-medium transition-all duration-300 relative overflow-hidden'
                   )}
                 >
+                  {isActive && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-50" />
+                  )}
                   <item.icon
                     className={cn(
                       isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground',
-                      'flex-shrink-0 mr-3 h-5 w-5 transition-colors'
+                      'flex-shrink-0 mr-3 h-5 w-5 transition-colors relative z-10'
                     )}
                     aria-hidden="true"
                   />
-                  {item.name}
+                  <span className="relative z-10">{item.name}</span>
                 </Link>
               );
             })}
@@ -123,15 +129,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="flex h-screen bg-transparent text-foreground overflow-hidden">
       {/* Sidebar */}
       <div className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 flex flex-col",
+        "fixed inset-y-0 left-0 z-50 w-64 bg-card/60 backdrop-blur-xl border-r border-border/50 shadow-2xl transform transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 flex flex-col",
         mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="flex h-16 shrink-0 items-center px-6 border-b border-border">
-          <ShieldCheck className="w-8 h-8 text-primary mr-2" />
-          <span className="text-lg font-bold tracking-tight">Sovereign AI</span>
+        <div className="flex h-16 shrink-0 items-center px-6 border-b border-border/50 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent pointer-events-none" />
+          <ShieldCheck className="w-8 h-8 text-primary mr-3 relative z-10" />
+          <span className="text-lg font-bold tracking-tight text-white relative z-10 uppercase font-heading">Sovereign AI</span>
         </div>
         
-        <div className="flex-1 overflow-y-auto py-4 space-y-6">
+        <div className="flex-1 overflow-y-auto py-6 space-y-6 scrollbar-none">
           
           {/* Grouped Navigation */}
           <div className="py-2">
@@ -139,29 +146,32 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
 
-        <div className="p-4 border-t border-border bg-card">
-          <div className="flex items-center mb-4">
+        <div className="p-4 border-t border-border/50 bg-card/40 backdrop-blur-sm">
+          <div className="flex items-center mb-4 px-2">
+            <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+              <span className="text-xs font-bold text-primary">{session?.user?.name?.charAt(0) || 'U'}</span>
+            </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-foreground">{session?.user?.name || 'User'}</p>
-              <p className="text-xs font-medium text-muted-foreground capitalize">
+              <p className="text-sm font-semibold text-white/90">{session?.user?.name || 'User'}</p>
+              <p className="text-xs font-medium text-primary capitalize">
                 {((session?.user as any)?.role || 'Engineer').toLowerCase()}
               </p>
             </div>
           </div>
           <Button 
             variant="ghost" 
-            className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+            className="w-full justify-start text-muted-foreground hover:text-white hover:bg-white/5 transition-colors group/logout border border-transparent hover:border-white/10"
             onClick={() => signOut({ callbackUrl: '/login' })}
           >
-            <LogOut className="mr-3 h-5 w-5" />
+            <LogOut className="mr-3 h-5 w-5 group-hover/logout:text-rose-400 transition-colors" />
             Sign out
           </Button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-16 shrink-0 items-center gap-x-4 bg-background border-b border-border px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 sticky top-0 z-40">
+      <div className="flex flex-1 flex-col overflow-hidden relative">
+        <header className="flex h-16 shrink-0 items-center gap-x-4 bg-background/50 backdrop-blur-md border-b border-border/50 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 sticky top-0 z-40">
           <button
             type="button"
             className="-m-2.5 p-2.5 text-muted-foreground hover:text-foreground lg:hidden"
@@ -180,14 +190,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           )}
 
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 items-center">
-             <div className="text-sm font-semibold text-foreground/80 tracking-wide">
+             <div className="text-sm font-semibold text-white/80 tracking-widest uppercase flex items-center">
+                <span className="w-1.5 h-1.5 bg-primary rounded-full mr-2 shadow-[0_0_10px_rgba(var(--primary),1)]"></span>
                 Sovereign Environment
              </div>
              <div className="ml-auto flex items-center space-x-4">
-                <div className="flex items-center text-xs text-green-400 border border-green-400/20 bg-green-400/10 px-2 py-1 rounded-full">
-                  <div className="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse"></div>
-                  Local Mode Active
-                </div>
+                <StatusBadge status="online" text="Local Mode Active" />
              </div>
           </div>
         </header>

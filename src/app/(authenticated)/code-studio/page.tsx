@@ -9,6 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Code2, Play, Copy, Download, ServerCrash, Cpu, Activity, MemoryStick, Loader2, Bot, Terminal, TerminalSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
+import { AnimatedGridPattern } from '@/components/ui/animated-grid';
+import { ShimmerButton } from '@/components/ui/shimmer-button';
+import { StatusBadge } from '@/components/ui/status-badge';
 
 interface CodeBlock {
   language: string;
@@ -167,29 +170,35 @@ export default function CodeGenerationStudioPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-8rem)] flex flex-col space-y-4 relative">
+    <div className="h-[calc(100vh-6rem)] flex flex-col space-y-4 relative animate-in fade-in duration-700">
+      <AnimatedGridPattern className="opacity-30 z-0 pointer-events-none" />
+      
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-card p-4 rounded-xl border border-border shadow-sm">
-        <div>
-          <h1 className="text-xl font-bold text-foreground">Code Generation Studio</h1>
-          <p className="text-sm text-muted-foreground">High-performance AI pair programming via local models</p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-card/60 backdrop-blur-xl p-6 rounded-xl border border-white/5 shadow-2xl relative z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent pointer-events-none" />
+        <div className="relative z-10">
+          <h1 className="text-3xl font-black tracking-tighter text-white uppercase font-heading">Code Generation Studio</h1>
+          <p className="text-xs font-bold uppercase tracking-widest text-primary/70 mt-1">High-performance AI pair programming via local models</p>
         </div>
         
-        <div className="flex items-center gap-3">
-          <Select value={model} onValueChange={setModel} disabled={isGenerating}>
-            <SelectTrigger className="w-[220px] bg-background border-border">
-              <SelectValue placeholder="Select Model" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableModels.length > 0 ? (
-                availableModels.map((m) => (
-                  <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-                ))
-              ) : (
-                <SelectItem value="auto">Auto (Default)</SelectItem>
-              )}
-            </SelectContent>
-          </Select>
+        <div className="flex items-center gap-3 relative z-10">
+          <div className="flex items-center bg-black/40 border border-white/10 rounded-lg px-3 py-1 shadow-inner hover:border-primary/50 transition-colors">
+            <Cpu className="h-4 w-4 text-primary mx-2" />
+            <Select value={model} onValueChange={setModel} disabled={isGenerating}>
+              <SelectTrigger className="w-[220px] h-8 border-none bg-transparent focus:ring-0 text-sm font-semibold text-white">
+                <SelectValue placeholder="Select Model" />
+              </SelectTrigger>
+              <SelectContent className="bg-card/95 backdrop-blur-xl border-white/10">
+                {availableModels.length > 0 ? (
+                  availableModels.map((m) => (
+                    <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                  ))
+                ) : (
+                  <SelectItem value="auto" className="font-bold text-primary tracking-wide">🌟 Auto (Default)</SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
@@ -204,40 +213,41 @@ export default function CodeGenerationStudioPage() {
       )}
 
       {/* Main Workspace */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0">
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 relative z-10">
         
         {/* Left: Prompt & History */}
-        <Card className="lg:w-1/3 flex flex-col border-border bg-card shadow-sm overflow-hidden rounded-xl">
-          <div className="p-4 border-b border-border bg-card/50">
-            <h2 className="font-semibold flex items-center gap-2 text-foreground">
+        <Card className="lg:w-1/3 flex flex-col border border-white/5 bg-card/60 backdrop-blur-xl shadow-2xl overflow-hidden rounded-xl">
+          <div className="p-4 border-b border-white/5 bg-black/20">
+            <h2 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 text-white/90">
               <TerminalSquare className="w-4 h-4 text-primary" /> Instruction Prompt
             </h2>
           </div>
           <div className="flex-1 p-4 flex flex-col min-h-0 relative">
             <Textarea
               placeholder="Describe the application, component, or algorithm you want to build..."
-              className="flex-1 resize-none bg-background border-border/60 shadow-inner focus-visible:ring-primary p-4 rounded-lg font-mono text-sm leading-relaxed"
+              className="flex-1 resize-none bg-black/40 border-white/10 shadow-inner focus-visible:ring-primary p-4 rounded-lg font-mono text-sm leading-relaxed text-white placeholder:text-white/30"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               disabled={isGenerating}
             />
-            <Button 
-              className="mt-4 w-full shadow-sm hover:shadow-md transition-all font-semibold bg-primary hover:bg-primary/90 text-primary-foreground"
+            
+            <ShimmerButton 
+              className="mt-4 w-full h-12 shadow-[0_0_20px_rgba(var(--primary),0.2)] font-bold uppercase tracking-widest text-xs"
               onClick={handleGenerate}
               disabled={isGenerating || !prompt.trim()}
             >
               {isGenerating ? (
-                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating Code...</>
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> <span className="text-primary-foreground font-bold">Synthesizing...</span></>
               ) : (
                 <><Code2 className="w-4 h-4 mr-2" /> Generate Architecture</>
               )}
-            </Button>
+            </ShimmerButton>
           </div>
         </Card>
 
         {/* Right: Code Viewer */}
-        <Card className="lg:w-2/3 flex flex-col border-border bg-card shadow-sm overflow-hidden rounded-xl">
-          <div className="flex items-center justify-between p-2 border-b border-border bg-card/50">
+        <Card className="lg:w-2/3 flex flex-col border border-white/5 bg-card/60 backdrop-blur-xl shadow-2xl overflow-hidden rounded-xl">
+          <div className="flex items-center justify-between p-2 border-b border-white/5 bg-black/20">
             {/* Tabs */}
             <div className="flex gap-1 overflow-x-auto">
               {codeBlocks.length > 0 ? (
@@ -245,36 +255,36 @@ export default function CodeGenerationStudioPage() {
                   <button
                     key={idx}
                     onClick={() => setActiveTab(idx)}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    className={`px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-md transition-colors ${
                       activeTab === idx 
-                        ? 'bg-primary/10 text-primary' 
-                        : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                        ? 'bg-primary/20 text-primary border border-primary/30 shadow-[inset_0_0_10px_rgba(var(--primary),0.2)]' 
+                        : 'text-muted-foreground hover:bg-white/5 hover:text-white border border-transparent'
                     }`}
                   >
                     {block.filename}
                   </button>
                 ))
               ) : (
-                <div className="px-4 py-2 text-sm text-muted-foreground font-medium">Output Viewer</div>
+                <div className="px-4 py-2 text-xs text-muted-foreground font-bold uppercase tracking-widest">Output Viewer</div>
               )}
             </div>
 
             {/* Actions */}
             <div className="flex items-center gap-2 pr-2">
-              <Button variant="ghost" size="sm" onClick={copyToClipboard} disabled={codeBlocks.length === 0} className="h-8">
-                <Copy className="w-4 h-4 text-muted-foreground hover:text-foreground transition-colors" />
+              <Button variant="ghost" size="sm" onClick={copyToClipboard} disabled={codeBlocks.length === 0} className="h-8 hover:bg-white/5">
+                <Copy className="w-4 h-4 text-muted-foreground hover:text-white transition-colors" />
               </Button>
-              <Button variant="ghost" size="sm" onClick={exportFile} disabled={codeBlocks.length === 0} className="h-8">
-                <Download className="w-4 h-4 text-muted-foreground hover:text-foreground transition-colors" />
+              <Button variant="ghost" size="sm" onClick={exportFile} disabled={codeBlocks.length === 0} className="h-8 hover:bg-white/5">
+                <Download className="w-4 h-4 text-muted-foreground hover:text-white transition-colors" />
               </Button>
-              <div className="w-px h-4 bg-border mx-1"></div>
-              <Button variant="secondary" size="sm" onClick={runSandbox} disabled={codeBlocks.length === 0 || isGenerating} className="h-8 bg-blue-600/10 text-blue-500 hover:bg-blue-600/20 border border-blue-500/20 shadow-sm">
-                <Play className="w-3.5 h-3.5 mr-1.5" /> Run in Sandbox
+              <div className="w-px h-4 bg-white/10 mx-1"></div>
+              <Button variant="secondary" size="sm" onClick={runSandbox} disabled={codeBlocks.length === 0 || isGenerating} className="h-8 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 border border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.2)] font-bold uppercase tracking-widest text-[10px]">
+                <Play className="w-3.5 h-3.5 mr-1.5" /> Execute
               </Button>
             </div>
           </div>
 
-          <div className="flex-1 relative bg-zinc-950 overflow-hidden flex flex-col min-h-0">
+          <div className="flex-1 relative bg-black/80 overflow-hidden flex flex-col min-h-0 border-t border-white/5">
              {isGenerating ? (
                <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/80 backdrop-blur-sm z-10">
                   <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800 shadow-xl mb-4">
@@ -297,9 +307,9 @@ export default function CodeGenerationStudioPage() {
                     <code>{rawResponse}</code>
                   </pre>
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-zinc-600 min-h-[300px]">
+                   <div className="flex flex-col items-center justify-center h-full text-white/20 min-h-[300px]">
                     <Terminal className="w-12 h-12 mb-4 opacity-30" />
-                    <p className="text-sm font-mono opacity-60">Awaiting prompt input.</p>
+                    <p className="text-xs font-bold uppercase tracking-widest opacity-60">Awaiting Neural Input</p>
                   </div>
                 )}
              </ScrollArea>
@@ -308,24 +318,24 @@ export default function CodeGenerationStudioPage() {
       </div>
 
       {/* Footer System Stats */}
-      <div className="flex items-center justify-between p-3 bg-card border border-border shadow-sm rounded-xl mt-auto">
+      <div className="flex items-center justify-between p-4 bg-card/60 backdrop-blur-xl border border-white/5 shadow-2xl rounded-xl mt-auto relative z-10">
          <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-emerald-500" />
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">System Status</span>
-              <Badge variant="outline" className="h-5 text-[10px] bg-emerald-500/10 text-emerald-500 border-emerald-500/20 rounded-sm font-bold">ONLINE</Badge>
+              <Activity className="w-4 h-4 text-emerald-400" />
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">System Status</span>
+              <StatusBadge status="online" text="ONLINE" pulse={false} />
             </div>
-            <div className="h-4 w-px bg-border hidden sm:block"></div>
+            <div className="h-4 w-px bg-white/10 hidden sm:block"></div>
             <div className="flex items-center gap-2 hidden sm:flex">
-              <MemoryStick className="w-4 h-4 text-indigo-400" />
-              <span className="text-xs font-mono text-muted-foreground">Hardware: <span className="text-foreground font-semibold">Local Node</span></span>
+              <MemoryStick className="w-4 h-4 text-cyan-400" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Hardware: <span className="text-white/90 font-mono text-xs">Local Node</span></span>
             </div>
          </div>
          
          <div className="flex items-center gap-2">
-            <Cpu className={`w-4 h-4 ${isGenerating ? 'text-amber-500 animate-pulse' : 'text-muted-foreground'}`} />
-            <span className="text-xs font-mono text-muted-foreground">
-              Execution Environment: <span className="text-foreground font-semibold">Secure VM</span>
+            <Cpu className={`w-4 h-4 ${isGenerating ? 'text-amber-500 animate-pulse' : 'text-primary/70'}`} />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Execution Environment: <span className="text-white/90 font-mono text-xs">Secure VM</span>
             </span>
          </div>
       </div>

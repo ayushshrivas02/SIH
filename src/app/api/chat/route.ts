@@ -68,6 +68,14 @@ export const POST = requireRole('USER', async (req: NextRequest) => {
       }
     }
 
+    // Reject embedding-only models for chat
+    const EMBEDDING_ONLY_PATTERNS = ['nomic-embed', 'all-minilm', 'mxbai-embed', 'snowflake-arctic-embed', 'bge-'];
+    if (targetModel && EMBEDDING_ONLY_PATTERNS.some(p => targetModel!.toLowerCase().includes(p))) {
+      return NextResponse.json({ 
+        error: `"${targetModel}" is an embedding model and cannot be used for chat. Please select a different model (e.g., qwen2.5:7b).` 
+      }, { status: 400 });
+    }
+
     if (targetModel && 'setModel' in provider) {
       (provider as any).setModel(targetModel);
       // For Ollama/OpenAI, if we need to set the vision model specifically, we also call setVisionModel

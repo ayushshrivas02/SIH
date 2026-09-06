@@ -4,10 +4,13 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Camera, Image as ImageIcon, Sparkles, Wand2, Download } from 'lucide-react';
+import { Camera, Image as ImageIcon, Sparkles, Wand2, Download, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useVisionStore } from '@/lib/store/appStore';
+import { AnimatedGridPattern } from '@/components/ui/animated-grid';
+import { MagicCard } from '@/components/ui/magic-card';
+import { ShimmerButton } from '@/components/ui/shimmer-button';
 
 export default function VisionPage() {
   const {
@@ -158,172 +161,181 @@ export default function VisionPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-8 relative animate-in fade-in duration-700">
+      <AnimatedGridPattern className="opacity-40" />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 pb-6 relative z-10 border-b border-border/50">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Vision Inspection & Editing</h1>
-          <p className="text-zinc-400">Analyze or enhance industrial imagery securely on-premise.</p>
+          <h1 className="text-4xl font-black tracking-tighter text-white uppercase font-heading drop-shadow-lg flex items-center gap-3">
+             <Eye className="h-8 w-8 text-primary" /> Vision Cortex
+          </h1>
+          <p className="text-sm font-medium text-muted-foreground mt-2 tracking-widest uppercase">
+            Analyze or enhance industrial imagery securely through neural pipelines.
+          </p>
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card className="bg-zinc-900 border-zinc-800 flex flex-col">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Camera className="h-5 w-5 text-blue-400" />
-              Upload Image
+      <div className="grid lg:grid-cols-2 gap-8 relative z-10">
+        <MagicCard gradientColor="hsl(var(--primary) / 0.15)" className="bg-card/60 backdrop-blur-xl border-white/5 shadow-2xl flex flex-col min-h-[600px]">
+          <CardHeader className="border-b border-white/5 bg-black/20 pb-4">
+            <CardTitle className="flex items-center gap-2 text-white font-bold uppercase tracking-widest text-xs">
+              <Camera className="h-4 w-4 text-cyan-400" /> Image Input Feed
             </CardTitle>
-            <CardDescription>Select a photo of equipment, machinery, or parts.</CardDescription>
+            <CardDescription className="text-[10px] font-medium uppercase tracking-widest text-primary/70 mt-1">Select visual telemetry for neural processing.</CardDescription>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col">
+          <CardContent className="flex-1 flex flex-col p-6">
             {!imagePreview ? (
-              <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-zinc-700 rounded-lg p-12 hover:border-zinc-500 transition-colors bg-zinc-950/50">
-                <ImageIcon className="h-12 w-12 text-zinc-600 mb-4" />
-                <p className="text-sm text-zinc-400 mb-4 text-center">Drag and drop an image, or click to browse.</p>
+              <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-white/10 rounded-xl p-12 hover:border-primary/50 transition-colors bg-black/40 shadow-inner group">
+                <ImageIcon className="h-16 w-16 text-white/10 group-hover:text-primary/50 transition-colors mb-6" />
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-6 text-center">Transmit visual data here</p>
                 <div className="relative">
                   <input
                     type="file"
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     accept="image/*"
                     onChange={handleImageUpload}
                   />
-                  <Button variant="secondary" className="bg-zinc-800 text-zinc-200 hover:bg-zinc-700">Browse Files</Button>
+                  <Button variant="outline" className="bg-black/60 border-white/10 text-white hover:bg-white/5 font-bold uppercase tracking-widest text-xs h-10 px-8">Browse Matrices</Button>
                 </div>
               </div>
             ) : (
-              <div className="flex-1 flex flex-col gap-4">
-                <div className="relative rounded-lg overflow-hidden border border-zinc-700 bg-black/50 aspect-video flex items-center justify-center">
+              <div className="flex-1 flex flex-col gap-4 h-full">
+                <div className="relative rounded-xl overflow-hidden border border-white/5 bg-black/60 flex-1 flex items-center justify-center shadow-inner">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={imagePreview} alt="Preview" className="max-w-full max-h-full object-contain" />
+                  <img src={imagePreview} alt="Preview" className="max-w-full max-h-full object-contain p-2" />
                 </div>
-                <Button variant="outline" onClick={clearVisionState} className="bg-transparent border-zinc-700 hover:bg-zinc-800 self-start">
-                  Remove Image
+                <Button variant="outline" onClick={clearVisionState} className="bg-rose-500/10 border-rose-500/20 text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 font-bold uppercase tracking-widest text-[10px] self-end">
+                  Clear Feed
                 </Button>
               </div>
             )}
           </CardContent>
-        </Card>
+        </MagicCard>
 
-        <Card className="bg-zinc-900 border-zinc-800 flex flex-col">
+        <MagicCard gradientColor="hsl(var(--primary) / 0.1)" className="bg-card/60 backdrop-blur-xl border-white/5 shadow-2xl flex flex-col min-h-[600px]">
           <Tabs defaultValue="analyze" className="flex flex-col h-full">
-            <CardHeader className="pb-2">
-              <TabsList className="bg-zinc-950/50 border border-zinc-800 w-full justify-start">
-                <TabsTrigger value="analyze" className="data-[state=active]:bg-zinc-800">
-                  <Sparkles className="h-4 w-4 mr-2" /> Analyze Image
+            <CardHeader className="pb-0 border-b border-white/5 bg-black/20">
+              <TabsList className="bg-transparent border-none w-full justify-start h-12 p-0 space-x-6">
+                <TabsTrigger value="analyze" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-primary data-[state=active]:border-b-2 border-primary rounded-none h-full px-0 font-bold uppercase tracking-widest text-[10px] text-muted-foreground hover:text-white transition-colors">
+                  <Sparkles className="h-3 w-3 mr-2" /> Neural Analysis
                 </TabsTrigger>
-                <TabsTrigger value="edit" className="data-[state=active]:bg-zinc-800">
-                  <Wand2 className="h-4 w-4 mr-2" /> Edit Image
+                <TabsTrigger value="edit" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-purple-400 data-[state=active]:border-b-2 border-purple-400 rounded-none h-full px-0 font-bold uppercase tracking-widest text-[10px] text-muted-foreground hover:text-white transition-colors">
+                  <Wand2 className="h-3 w-3 mr-2" /> Image Synthesis
                 </TabsTrigger>
               </TabsList>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col pt-4">
+            <CardContent className="flex-1 flex flex-col p-6">
               
-              <TabsContent value="analyze" className="flex-1 flex flex-col gap-4 m-0 data-[state=inactive]:hidden">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-zinc-300">Analysis Prompt</label>
+              <TabsContent value="analyze" className="flex-1 flex flex-col gap-6 m-0 data-[state=inactive]:hidden outline-none">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-primary/70 block">Analysis Directives</label>
                   <Textarea 
                     value={analyzePrompt}
                     onChange={(e) => setAnalyzePrompt(e.target.value)}
-                    className="bg-zinc-950 border-zinc-700 text-zinc-200 resize-none h-24"
-                    placeholder="What should the vision model look for?"
+                    className="bg-black/60 border-white/10 text-white font-mono text-xs resize-none h-24 rounded-xl shadow-inner focus-visible:ring-primary"
+                    placeholder="Specify defect detection vectors or analytical queries..."
                   />
                 </div>
                 
-                <Button 
+                <ShimmerButton 
                   onClick={handleAnalyze} 
                   disabled={!imagePreview || analyzing} 
-                  className="bg-blue-600 hover:bg-blue-700 w-full"
+                  className="w-full h-12 font-bold uppercase tracking-widest text-xs shadow-xl shadow-primary/20 pointer-events-auto"
                 >
-                  {analyzing ? 'Analyzing Image...' : 'Run Vision Analysis'}
-                </Button>
+                  {analyzing ? 'Processing Telemetry...' : 'Execute Neural Analysis'}
+                </ShimmerButton>
 
-                <div className="flex-1 mt-4 flex flex-col">
-                  <label className="text-sm font-medium text-zinc-300 block mb-2">Findings</label>
-                  <div className="bg-zinc-950 border border-zinc-800 rounded-lg p-4 flex-1 min-h-[12rem] overflow-y-auto">
+                <div className="flex-1 flex flex-col">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-primary/70 block mb-3">Model Output Matrix</label>
+                  <div className="bg-black/60 border border-white/5 rounded-xl p-6 flex-1 min-h-[12rem] overflow-y-auto shadow-inner relative group">
                     {analyzing ? (
-                      <div className="flex items-center justify-center h-full text-zinc-500 space-x-2">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" />
-                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '0.2s' }} />
-                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '0.4s' }} />
+                      <div className="flex items-center justify-center h-full text-primary space-x-3">
+                        <div className="w-1.5 h-6 bg-primary animate-pulse" />
+                        <div className="w-1.5 h-8 bg-primary animate-pulse" style={{ animationDelay: '0.1s' }} />
+                        <div className="w-1.5 h-4 bg-primary animate-pulse" style={{ animationDelay: '0.2s' }} />
+                        <span className="font-mono text-xs ml-4 uppercase tracking-widest">Inferencing...</span>
                       </div>
                     ) : analyzeResult ? (
-                      <div className="text-sm text-zinc-200 whitespace-pre-wrap">{analyzeResult}</div>
+                      <div className="text-xs text-white/90 font-mono leading-relaxed whitespace-pre-wrap">{analyzeResult}</div>
                     ) : (
-                      <div className="flex items-center justify-center h-full text-zinc-600 italic">
-                        Awaiting image analysis...
+                      <div className="flex items-center justify-center h-full text-white/10 font-bold uppercase tracking-widest text-[10px]">
+                        Awaiting Execution
                       </div>
                     )}
                   </div>
                 </div>
                 {analyzeResult && (
-                   <div className="mt-2 text-xs text-yellow-500 border border-yellow-500/20 bg-yellow-500/10 p-3 rounded-md">
-                     <strong>Disclaimer:</strong> AI-generated observations are decision-support outputs and must be verified by qualified personnel.
+                   <div className="text-[10px] text-amber-500 border border-amber-500/20 bg-amber-500/10 p-3 rounded-lg font-mono tracking-wide">
+                     <strong className="uppercase">Notice:</strong> AI-generated observations are decision-support outputs and must be verified.
                    </div>
                 )}
               </TabsContent>
 
-              <TabsContent value="edit" className="flex-1 flex flex-col gap-4 m-0 data-[state=inactive]:hidden">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-zinc-300">Edit Prompt</label>
+              <TabsContent value="edit" className="flex-1 flex flex-col gap-6 m-0 data-[state=inactive]:hidden outline-none">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-purple-400/70 block">Synthesis Parameters</label>
                   <Textarea 
                     value={editPrompt}
                     onChange={(e) => setEditPrompt(e.target.value)}
-                    className="bg-zinc-950 border-zinc-700 text-zinc-200 resize-none h-24"
-                    placeholder="Describe how to edit the image (e.g. 'Remove background', 'Improve lighting')."
+                    className="bg-black/60 border-white/10 text-white font-mono text-xs resize-none h-24 rounded-xl shadow-inner focus-visible:ring-purple-400"
+                    placeholder="Describe how to alter the visual matrix (e.g. 'Isolate main component', 'Enhance contrast')."
                   />
                 </div>
                 
-                <Button 
+                <ShimmerButton 
                   onClick={handleEdit} 
                   disabled={!imagePreview || editing} 
-                  className="bg-purple-600 hover:bg-purple-700 w-full"
+                  className="w-full h-12 font-bold uppercase tracking-widest text-xs shadow-xl shadow-purple-500/20 pointer-events-auto"
+                  shimmerColor="hsl(var(--primary))"
                 >
-                  {editing ? 'Generating Image...' : 'Generate Edited Image'}
-                </Button>
+                  {editing ? 'Synthesizing...' : 'Initialize Generative Pipeline'}
+                </ShimmerButton>
 
-                <div className="flex-1 mt-4 flex flex-col">
-                  <label className="text-sm font-medium text-zinc-300 block mb-2">Edited Result</label>
-                  <div className="bg-zinc-950 border border-zinc-800 rounded-lg flex-1 min-h-[12rem] flex items-center justify-center overflow-hidden">
+                <div className="flex-1 flex flex-col">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-purple-400/70 block mb-3">Synthesized Artifact</label>
+                  <div className="bg-black/60 border border-white/5 rounded-xl flex-1 min-h-[12rem] flex items-center justify-center overflow-hidden shadow-inner p-2">
                     {editing ? (
-                      <div className="flex items-center justify-center h-full text-zinc-500 space-x-2">
-                        <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" />
-                        <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: '0.2s' }} />
-                        <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: '0.4s' }} />
+                      <div className="flex items-center justify-center h-full text-purple-400 space-x-3">
+                        <div className="w-1.5 h-6 bg-purple-400 animate-pulse" />
+                        <div className="w-1.5 h-8 bg-purple-400 animate-pulse" style={{ animationDelay: '0.1s' }} />
+                        <div className="w-1.5 h-4 bg-purple-400 animate-pulse" style={{ animationDelay: '0.2s' }} />
+                        <span className="font-mono text-xs ml-4 uppercase tracking-widest">Rendering...</span>
                       </div>
                     ) : editResult ? (
-                      <div className="relative w-full h-full flex flex-col items-center justify-center p-2">
+                      <div className="relative w-full h-full flex flex-col items-center justify-center p-2 rounded-lg border border-white/5 bg-black/40">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={editResult} alt="Edited Result" className="max-w-full max-h-full object-contain rounded-md" />
+                        <img src={editResult} alt="Edited Result" className="max-w-full max-h-full object-contain" />
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center h-full text-zinc-600 italic">
-                        Awaiting image editing...
+                      <div className="flex items-center justify-center h-full text-white/10 font-bold uppercase tracking-widest text-[10px]">
+                        Awaiting Synthesis
                       </div>
                     )}
                   </div>
                   {editResult && (
-                    <div className="mt-4 flex gap-2">
-                      <Button variant="outline" className="flex-1 border-zinc-700 bg-zinc-900" onClick={() => {
+                    <div className="mt-4 flex gap-3">
+                      <Button variant="outline" className="flex-1 bg-black/40 border-white/10 hover:bg-white/5 font-bold uppercase tracking-widest text-[10px] text-white" onClick={() => {
                         const link = document.createElement('a');
                         link.href = editResult;
-                        link.download = 'edited-image.png';
+                        link.download = 'synthesized-artifact.png';
                         link.click();
                       }}>
-                        <Download className="mr-2 h-4 w-4" /> Save
+                        <Download className="mr-2 h-3 w-3" /> Save To Disk
                       </Button>
-                      <Button variant="secondary" className="flex-1 bg-zinc-800">Add to Report</Button>
+                      <Button variant="outline" className="flex-1 bg-purple-500/10 border-purple-500/30 text-purple-400 hover:bg-purple-500/20 font-bold uppercase tracking-widest text-[10px]">
+                        Attach To Dossier
+                      </Button>
                     </div>
                   )}
                 </div>
                 {editResult && (
-                   <div className="mt-2 text-xs text-yellow-500 border border-yellow-500/20 bg-yellow-500/10 p-3 rounded-md">
-                     <strong>Important:</strong> AI-generated visualization — not an engineering measurement or verified physical representation.
+                   <div className="text-[10px] text-purple-400 border border-purple-500/20 bg-purple-500/10 p-3 rounded-lg font-mono tracking-wide">
+                     <strong className="uppercase">Notice:</strong> AI-synthesized visualization — not a verified physical representation.
                    </div>
                 )}
               </TabsContent>
             </CardContent>
           </Tabs>
-        </Card>
+        </MagicCard>
       </div>
     </div>
   );

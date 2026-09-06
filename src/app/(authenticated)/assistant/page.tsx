@@ -15,6 +15,9 @@ import { useToast } from '@/hooks/use-toast';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import AgentWorkspacePanel from '@/components/agent/AgentWorkspacePanel';
+import { AnimatedGridPattern } from '@/components/ui/animated-grid';
+import { StatusBadge } from '@/components/ui/status-badge';
+import { ShimmerButton } from '@/components/ui/shimmer-button';
 import { useRouter } from 'next/navigation';
 
 export default function AssistantPage() {
@@ -431,21 +434,23 @@ export default function AssistantPage() {
   if (!isMounted) return null; // Avoid hydration mismatch
   
   return (
-    <div className="flex h-[calc(100vh-8rem)] gap-4 relative">
+    <div className="flex h-[calc(100vh-6rem)] gap-4 relative animate-in fade-in duration-700">
+      <AnimatedGridPattern className="opacity-30 z-0 pointer-events-none" />
+      
       {/* Sidebar for History */}
-      <Card className="w-64 flex-shrink-0 flex flex-col overflow-hidden shadow-none hidden lg:flex rounded-l-none border-y-0 border-l-0 rounded-r-xl border-border">
-        <div className="p-4 border-b border-border flex gap-2">
-            <Button onClick={handleClearChat} variant="secondary" className="flex-1 bg-muted/50 hover:bg-muted">
-                <RefreshCw className="h-4 w-4 mr-2" /> New Chat
+      <Card className="w-64 flex-shrink-0 flex flex-col overflow-hidden shadow-2xl hidden lg:flex rounded-xl bg-card/60 backdrop-blur-xl border border-white/5 relative z-10">
+        <div className="p-4 border-b border-white/5 flex gap-2">
+            <Button onClick={handleClearChat} variant="secondary" className="flex-1 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20">
+                <RefreshCw className="h-4 w-4 mr-2" /> New Session
             </Button>
-            <Button onClick={deleteAllConversations} variant="outline" title="Delete all history" className="border-destructive/20 text-destructive hover:bg-destructive/10 px-3">
+            <Button onClick={deleteAllConversations} variant="outline" title="Delete all history" className="border-rose-500/20 text-rose-400 hover:bg-rose-500/10 px-3 transition-colors">
                 <Trash2 className="h-4 w-4" />
             </Button>
         </div>
-        <ScrollArea className="flex-1 p-2 min-h-0 bg-background/50">
+        <ScrollArea className="flex-1 p-2 min-h-0 bg-transparent">
             <div className="space-y-1">
                 {conversations.length === 0 && (
-                    <div className="text-center text-sm text-muted-foreground mt-6 px-4">
+                    <div className="text-center text-xs font-bold uppercase tracking-widest text-muted-foreground mt-6 px-4">
                         No recent history
                     </div>
                 )}
@@ -453,13 +458,13 @@ export default function AssistantPage() {
                     <div 
                         key={conv.id}
                         onClick={() => loadConversation(conv.id)}
-                        className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors group ${conversationId === conv.id ? 'bg-primary/5 text-primary border-l-2 border-primary' : 'hover:bg-muted/50 text-foreground'}`}
+                        className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all group ${conversationId === conv.id ? 'bg-primary/10 text-primary border border-primary/30 shadow-[inset_0_0_15px_rgba(var(--primary),0.1)]' : 'hover:bg-white/5 text-white/70 hover:text-white border border-transparent'}`}
                     >
                         <div className="flex items-center gap-3 overflow-hidden">
-                            <MessageSquare className={`h-4 w-4 shrink-0 ${conversationId === conv.id ? 'text-primary' : 'text-muted-foreground'}`} />
+                            <MessageSquare className={`h-4 w-4 shrink-0 ${conversationId === conv.id ? 'text-primary' : 'text-muted-foreground group-hover:text-white'}`} />
                             <span className="text-sm truncate font-medium">{conv.title}</span>
                         </div>
-                        <Button variant="ghost" size="icon" onClick={(e) => deleteConversation(conv.id, e)} className="h-6 w-6 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" onClick={(e) => deleteConversation(conv.id, e)} className="h-6 w-6 text-muted-foreground hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity">
                             <Trash2 className="h-3 w-3" />
                         </Button>
                     </div>
@@ -470,50 +475,51 @@ export default function AssistantPage() {
 
       {/* Main Chat Area */}
       <div 
-        className={`flex-1 flex flex-col min-w-0 transition-all rounded-xl border ${isDragOver ? 'border-primary bg-primary/5' : 'border-border/50 bg-background shadow-sm'}`}
+        className={`flex-1 flex flex-col min-w-0 transition-all rounded-xl border relative z-10 shadow-2xl ${isDragOver ? 'border-primary bg-primary/10' : 'border-white/5 bg-card/60 backdrop-blur-xl'}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-          <div className="flex items-center justify-between p-4 shrink-0 border-b border-border bg-card/30 rounded-t-xl backdrop-blur-sm z-10">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+          <div className="flex items-center justify-between p-4 shrink-0 border-b border-white/5 bg-black/20 rounded-t-xl z-10 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent pointer-events-none" />
+            <div className="relative z-10">
+              <h1 className="text-2xl font-black tracking-tighter text-white uppercase flex items-center gap-2 font-heading">
                  AI Workbench
-                 <Badge variant="outline" className="ml-2 font-normal text-xs tracking-normal bg-background/50 border-primary/20 text-primary hidden sm:inline-flex">Secure</Badge>
+                 <Badge variant="outline" className="ml-2 font-bold text-[10px] tracking-widest bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hidden sm:inline-flex uppercase">Secure Channel</Badge>
               </h1>
-              <p className="text-sm text-muted-foreground mt-0.5 hidden sm:block">Interact with local models and sovereign data.</p>
+              <p className="text-xs font-medium uppercase tracking-widest text-primary/70 mt-1 hidden sm:block">Interact with local models and sovereign data.</p>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center space-x-2 bg-background border border-border rounded-lg px-3 py-1.5 shadow-sm transition-colors hover:border-primary/50">
+            <div className="flex items-center gap-3 relative z-10">
+              <div className="flex items-center space-x-2 bg-black/40 border border-white/10 rounded-lg px-4 py-2 shadow-inner transition-colors hover:border-primary/50">
                 <button
                   id="agent-mode"
                   type="button"
                   role="switch"
                   aria-checked={agentMode}
                   onClick={() => setAgentMode(!agentMode)}
-                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${agentMode ? 'bg-primary' : 'bg-muted-foreground/30'}`}
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${agentMode ? 'bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]' : 'bg-muted-foreground/30'}`}
                 >
                   <span
                     className={`pointer-events-none block h-4 w-4 rounded-full bg-white shadow-sm ring-0 transition-transform ${agentMode ? 'translate-x-4' : 'translate-x-0'}`}
                   />
                 </button>
-                <Label htmlFor="agent-mode" onClick={() => setAgentMode(!agentMode)} className="text-sm font-medium flex items-center gap-1.5 cursor-pointer text-foreground">
-                  <BrainCircuit className={`h-4 w-4 ${agentMode ? 'text-primary' : 'text-muted-foreground'}`} /> Agent
+                <Label htmlFor="agent-mode" onClick={() => setAgentMode(!agentMode)} className="text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 cursor-pointer text-white/90">
+                  <BrainCircuit className={`h-4 w-4 ${agentMode ? 'text-primary' : 'text-muted-foreground'}`} /> Agent Mode
                 </Label>
               </div>
               
               <div className="hidden sm:flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={exportToPDF} disabled={messages.length === 0} className="bg-background hover:bg-muted">
-                  <Download className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline">Export</span>
+                <Button variant="outline" size="sm" onClick={exportToPDF} disabled={messages.length === 0} className="bg-black/40 border-white/10 hover:bg-white/10 hover:text-white transition-colors">
+                  <Download className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline font-bold uppercase tracking-widest text-xs">Export</span>
                 </Button>
-                <div className="flex items-center bg-background border border-border rounded-lg px-2 py-1 shadow-sm hover:border-primary/50 transition-colors">
+                <div className="flex items-center bg-black/40 border border-white/10 rounded-lg px-3 py-1 shadow-inner hover:border-primary/50 transition-colors">
                   <Server className="h-4 w-4 text-primary mx-2" />
                   <Select value={selectedModel} onValueChange={handleModelChange}>
-                    <SelectTrigger className="w-[180px] h-7 border-none bg-transparent focus:ring-0 text-sm font-medium">
+                    <SelectTrigger className="w-[180px] h-8 border-none bg-transparent focus:ring-0 text-sm font-semibold text-white">
                       <SelectValue placeholder="Select Model" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="auto" className="font-semibold text-primary">🌟 Auto (Orchestrator)</SelectItem>
+                    <SelectContent className="bg-card/95 backdrop-blur-xl border-white/10">
+                      <SelectItem value="auto" className="font-bold text-primary tracking-wide">🌟 Orchestrator</SelectItem>
                       {models.length === 0 ? (
                         <SelectItem value="default">Default Model</SelectItem>
                       ) : (
@@ -542,28 +548,28 @@ export default function AssistantPage() {
             <ScrollArea className="flex-1 min-h-0 relative">
               <div ref={chatContainerRef} className="p-4 sm:p-6 space-y-8 max-w-4xl mx-auto w-full">
                 {messages.length === 0 && (
-                  <div className="flex flex-col items-center justify-center h-[50vh] text-center px-4 animate-in fade-in zoom-in duration-500">
-                    <div className="p-6 bg-card border border-border rounded-full mb-6 shadow-sm">
+                  <div className="flex flex-col items-center justify-center h-[50vh] text-center px-4 animate-in fade-in zoom-in duration-700">
+                    <div className="p-6 bg-black/40 border border-primary/30 rounded-full mb-6 shadow-[0_0_30px_rgba(var(--primary),0.2)]">
                        <Bot className="h-12 w-12 text-primary" />
                     </div>
-                    <h2 className="text-2xl font-bold text-foreground mb-3">Sovereign AI Ready</h2>
-                    <p className="max-w-md text-muted-foreground mb-8">
+                    <h2 className="text-3xl font-black uppercase font-heading tracking-tighter text-white mb-3">System Ready</h2>
+                    <p className="max-w-md text-sm font-medium text-muted-foreground mb-8">
                       Your secure, private AI environment is online. Analyze sensitive documents, query local models, and run autonomous agents safely.
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl text-left">
-                      <div className="bg-card hover:bg-muted/50 p-4 rounded-xl border border-border transition-colors shadow-sm">
-                        <MessageSquare className="h-6 w-6 mb-3 text-primary" />
-                        <h3 className="font-semibold text-foreground mb-1">Chat Safely</h3>
+                      <div className="bg-black/40 hover:bg-black/60 p-5 rounded-xl border border-white/5 hover:border-primary/50 transition-all shadow-lg group">
+                        <MessageSquare className="h-6 w-6 mb-3 text-primary drop-shadow-md group-hover:scale-110 transition-transform" />
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-white/90 mb-1">Chat Safely</h3>
                         <p className="text-xs text-muted-foreground leading-relaxed">Have conversations completely offline using locally hosted LLMs.</p>
                       </div>
-                      <div className="bg-card hover:bg-muted/50 p-4 rounded-xl border border-border transition-colors shadow-sm">
-                        <UploadCloud className="h-6 w-6 mb-3 text-emerald-500" />
-                        <h3 className="font-semibold text-foreground mb-1">Analyze Documents</h3>
+                      <div className="bg-black/40 hover:bg-black/60 p-5 rounded-xl border border-white/5 hover:border-cyan-500/50 transition-all shadow-lg group">
+                        <UploadCloud className="h-6 w-6 mb-3 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)] group-hover:scale-110 transition-transform" />
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-white/90 mb-1">Analyze Documents</h3>
                         <p className="text-xs text-muted-foreground leading-relaxed">Drag and drop PDFs to add them to your secure Knowledge Base.</p>
                       </div>
-                      <div className="bg-card hover:bg-muted/50 p-4 rounded-xl border border-border transition-colors shadow-sm">
-                        <BrainCircuit className="h-6 w-6 mb-3 text-blue-500" />
-                        <h3 className="font-semibold text-foreground mb-1">Run Agents</h3>
+                      <div className="bg-black/40 hover:bg-black/60 p-5 rounded-xl border border-white/5 hover:border-emerald-500/50 transition-all shadow-lg group">
+                        <BrainCircuit className="h-6 w-6 mb-3 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)] group-hover:scale-110 transition-transform" />
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-white/90 mb-1">Run Agents</h3>
                         <p className="text-xs text-muted-foreground leading-relaxed">Enable Agent Mode for autonomous, multi-step problem solving.</p>
                       </div>
                     </div>
@@ -578,26 +584,26 @@ export default function AssistantPage() {
                     } animate-in fade-in slide-in-from-bottom-2 duration-300`}
                   >
                     {message.role === 'assistant' && (
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 shadow-sm ${message.isError ? 'bg-destructive/10 border border-destructive/20 text-destructive' : 'bg-card border border-border text-primary'}`}>
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-lg ${message.isError ? 'bg-rose-950/50 border border-rose-500/30 text-rose-400' : 'bg-black/60 border border-primary/30 text-primary shadow-[0_0_10px_rgba(var(--primary),0.2)]'}`}>
                         {message.isError ? <AlertCircle className="h-5 w-5" /> : <Bot className="h-5 w-5" />}
                       </div>
                     )}
                     
                     <div
-                      className={`px-5 py-4 rounded-2xl max-w-[85%] sm:max-w-[75%] flex flex-col gap-2 shadow-sm ${
+                      className={`px-6 py-4 rounded-2xl max-w-[85%] sm:max-w-[75%] flex flex-col gap-2 shadow-xl ${
                         message.role === 'user'
-                          ? 'bg-primary text-primary-foreground rounded-tr-sm'
+                          ? 'bg-primary text-primary-foreground rounded-tr-sm shadow-[0_0_15px_rgba(var(--primary),0.3)] border border-primary-foreground/10'
                           : message.isError
-                          ? 'bg-destructive/10 border border-destructive/20 text-destructive rounded-tl-sm'
-                          : 'bg-card border border-border text-foreground rounded-tl-sm'
+                          ? 'bg-rose-950/30 border border-rose-500/30 text-rose-400 rounded-tl-sm'
+                          : 'bg-black/60 backdrop-blur-md border border-white/10 text-white rounded-tl-sm'
                       }`}
                     >
-                      <div className={`prose prose-sm max-w-none leading-relaxed overflow-x-auto ${message.role === 'user' ? 'text-primary-foreground dark:prose-invert prose-p:text-primary-foreground prose-a:text-primary-foreground' : 'text-foreground dark:prose-invert'}`}>
+                      <div className={`prose prose-sm max-w-none leading-relaxed overflow-x-auto ${message.role === 'user' ? 'text-primary-foreground dark:prose-invert prose-p:text-primary-foreground prose-a:text-primary-foreground' : 'text-white/90 dark:prose-invert'}`}>
                         <ReactMarkdown>{message.content}</ReactMarkdown>
                       </div>
                       {message.providerInfo && (
-                        <div className="mt-2 pt-2 border-t border-border/50 flex justify-between items-center">
-                          <span className="text-[10px] font-medium text-muted-foreground flex items-center gap-1.5 opacity-70">
+                        <div className="mt-3 pt-3 border-t border-white/10 flex justify-between items-center">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-primary/70 flex items-center gap-1.5">
                             <Server className="h-3 w-3" /> {message.providerInfo}
                           </span>
                         </div>
@@ -605,8 +611,8 @@ export default function AssistantPage() {
                     </div>
 
                     {message.role === 'user' && (
-                      <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center shrink-0 shadow-sm border border-border">
-                        <User className="h-5 w-5 text-secondary-foreground" />
+                      <div className="w-10 h-10 rounded-full bg-black/60 flex items-center justify-center shrink-0 shadow-lg border border-white/10">
+                        <User className="h-5 w-5 text-white/70" />
                       </div>
                     )}
                   </div>
@@ -614,14 +620,14 @@ export default function AssistantPage() {
                 
                 {isLoading && messages.length > 0 && messages[messages.length - 1].role === 'user' && (
                   <div className="flex gap-4 justify-start animate-in fade-in duration-300">
-                    <div className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center shrink-0 shadow-sm">
+                    <div className="w-10 h-10 rounded-full bg-black/60 border border-primary/30 flex items-center justify-center shrink-0 shadow-lg shadow-primary/10">
                       <Loader2 className="h-4 w-4 text-primary animate-spin" />
                     </div>
-                    <div className="px-5 py-4 rounded-2xl rounded-tl-sm bg-card border border-border flex items-center space-x-2 shadow-sm">
-                       <span className="text-sm font-medium text-muted-foreground mr-1">Generating</span>
-                       <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce"></div>
-                       <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0.15s' }}></div>
-                       <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0.3s' }}></div>
+                    <div className="px-6 py-4 rounded-2xl rounded-tl-sm bg-black/60 backdrop-blur-md border border-white/10 flex items-center space-x-2 shadow-xl">
+                       <span className="text-xs font-bold uppercase tracking-widest text-primary/70 mr-2">Processing</span>
+                       <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulseGlow shadow-[0_0_8px_rgba(var(--primary),0.8)]"></div>
+                       <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulseGlow shadow-[0_0_8px_rgba(var(--primary),0.8)]" style={{ animationDelay: '0.15s' }}></div>
+                       <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulseGlow shadow-[0_0_8px_rgba(var(--primary),0.8)]" style={{ animationDelay: '0.3s' }}></div>
                     </div>
                   </div>
                 )}
@@ -629,28 +635,28 @@ export default function AssistantPage() {
               </div>
             </ScrollArea>
 
-            <div className="p-4 bg-card/80 backdrop-blur-md border-t border-border mt-auto rounded-b-xl z-10">
+            <div className="p-4 bg-card/60 backdrop-blur-xl border-t border-white/5 mt-auto rounded-b-xl z-10">
               <div className="max-w-4xl mx-auto relative">
                 {isLoading && (
-                  <div className="absolute -top-14 left-1/2 -translate-x-1/2">
+                  <div className="absolute -top-16 left-1/2 -translate-x-1/2">
                     <Button 
                       variant="outline" 
                       size="sm" 
                       onClick={handleStopGeneration}
-                      className="rounded-full bg-background/80 backdrop-blur-md border-border shadow-md hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-all animate-in fade-in slide-in-from-bottom-2"
+                      className="rounded-full bg-black/80 backdrop-blur-xl border-rose-500/30 text-rose-400 shadow-xl shadow-rose-500/10 hover:bg-rose-950/50 hover:text-rose-300 hover:border-rose-500/50 transition-all animate-in fade-in slide-in-from-bottom-4"
                     >
-                      <StopCircle className="h-4 w-4 mr-2" /> Stop Generating
+                      <StopCircle className="h-4 w-4 mr-2" /> Stop Processing
                     </Button>
                   </div>
                 )}
                 
-                <form onSubmit={handleSubmit} className="flex gap-2 items-end relative">
+                <form onSubmit={handleSubmit} className="flex gap-3 items-end relative">
                   <Button 
                     type="button" 
                     variant="outline" 
                     size="icon" 
                     title="Attach Document"
-                    className="shrink-0 rounded-xl h-12 w-12 relative overflow-hidden group border-border bg-background hover:bg-muted"
+                    className="shrink-0 rounded-xl h-14 w-14 relative overflow-hidden group border-white/10 bg-black/40 hover:bg-white/5 hover:border-white/20 transition-all shadow-inner"
                   >
                     <input
                       type="file"
@@ -662,32 +668,32 @@ export default function AssistantPage() {
                         }
                       }}
                     />
-                    <Paperclip className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors relative z-0" />
+                    <Paperclip className="h-5 w-5 text-white/50 group-hover:text-cyan-400 transition-colors relative z-0" />
                   </Button>
                   
                   <div className="flex-1 relative">
                     <Input
                       value={input}
                       onChange={(event) => setInput(event.target.value)}
-                      placeholder={agentMode ? "Describe the complex task for the autonomous agent..." : "Ask your private AI..."}
-                      className="w-full bg-background border-border text-foreground rounded-xl px-5 py-3 h-12 shadow-sm focus-visible:ring-primary pr-14"
+                      placeholder={agentMode ? "Describe the complex mission for the autonomous agent..." : "Query the secure intelligence matrix..."}
+                      className="w-full bg-black/40 border-white/10 text-white rounded-xl px-5 py-4 h-14 shadow-inner focus-visible:ring-primary focus-visible:border-primary pr-14 text-base placeholder:text-white/30"
                     />
                   </div>
                   
-                  <Button 
+                  <ShimmerButton 
                     type="submit" 
                     disabled={isLoading || !input.trim()} 
-                    className={`shrink-0 rounded-xl h-12 px-6 transition-all shadow-sm font-semibold ${agentMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-primary hover:bg-primary/90'}`}
+                    className={`shrink-0 rounded-xl h-14 px-8 transition-all shadow-xl font-bold uppercase tracking-widest text-xs ${agentMode ? 'bg-emerald-600' : 'bg-primary'}`}
                   >
                     {agentMode ? (
-                       <><BrainCircuit className="h-5 w-5 sm:mr-2" /> <span className="hidden sm:inline">Run Agent</span></>
+                       <><BrainCircuit className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline">Initialize</span></>
                     ) : (
-                       <><Send className="h-5 w-5 sm:mr-2" /> <span className="hidden sm:inline">Send</span></>
+                       <><Send className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline">Execute</span></>
                     )}
-                  </Button>
+                  </ShimmerButton>
                 </form>
-                <div className="text-center mt-2">
-                   <p className="text-[10px] text-muted-foreground">AI responses are generated locally. Your data never leaves this environment.</p>
+                <div className="text-center mt-3">
+                   <p className="text-[10px] font-bold tracking-widest uppercase text-white/30">Intelligence generated locally. Zero-trust environment.</p>
                 </div>
               </div>
             </div>
